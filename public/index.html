@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claude Crawler</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-left">
+        <h1 class="logo">⚡ Claude Crawler</h1>
+        <span class="tagline">Discover &amp; install the best Claude Code tools</span>
+      </div>
+      <div class="header-right">
+        <div class="search-wrap">
+          <input type="search" id="search" placeholder="Search tools…" autocomplete="off" />
+        </div>
+        <button id="btn-refresh" class="btn btn-primary" title="Re-crawl all sources">
+          <span class="btn-icon">↻</span> Refresh
+        </button>
+        <div id="status-dot" class="status-dot" title="Server status"></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- ── Left sidebar: filters ── -->
+      <aside class="sidebar">
+        <section class="filter-section">
+          <h3 class="filter-label">Category</h3>
+          <div class="filter-group" id="filter-category">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="mcp-servers">MCP Servers</button>
+            <button class="filter-btn" data-value="agents">Agents</button>
+            <button class="filter-btn" data-value="skills">Skills</button>
+            <button class="filter-btn" data-value="templates">Templates</button>
+            <button class="filter-btn" data-value="hooks">Hooks</button>
+            <button class="filter-btn" data-value="tools">Tools</button>
+            <button class="filter-btn" data-value="plugins">Plugins</button>
+          </div>
+        </section>
+
+        <section class="filter-section">
+          <h3 class="filter-label">Job</h3>
+          <div class="filter-group" id="filter-job">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="automate-workflow">Automate Workflow</button>
+            <button class="filter-btn" data-value="code-quality">Code Quality</button>
+            <button class="filter-btn" data-value="language-support">Language Support</button>
+            <button class="filter-btn" data-value="external-services">External Services</button>
+            <button class="filter-btn" data-value="ai-enhancement">AI Enhancement</button>
+            <button class="filter-btn" data-value="project-management">Project Management</button>
+          </div>
+        </section>
+
+        <section class="filter-section">
+          <h3 class="filter-label">Source</h3>
+          <div class="filter-group" id="filter-source">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="github">GitHub</button>
+            <button class="filter-btn" data-value="npm">npm</button>
+            <button class="filter-btn" data-value="anthropic">Official</button>
+            <button class="filter-btn" data-value="web">Community</button>
+            <button class="filter-btn" data-value="ecc">Local</button>
+          </div>
+        </section>
+
+        <section class="filter-section">
+          <h3 class="filter-label">Sort by</h3>
+          <select id="sort-select" class="sort-select">
+            <option value="score">Score</option>
+            <option value="stars">Stars</option>
+            <option value="downloads">Downloads</option>
+            <option value="updated">Newest</option>
+            <option value="name">Name</option>
+          </select>
+        </section>
+      </aside>
+
+      <!-- ── Main content ── -->
+      <main class="main-content">
+        <div id="toolbar" class="toolbar">
+          <span id="result-count" class="result-count">Loading…</span>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="hide-installed" />
+            <span>Hide installed</span>
+          </label>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="official-only" />
+            <span>Official only</span>
+          </label>
+        </div>
+
+        <div id="catalog-grid" class="catalog-grid">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Crawling sources…</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- ── Right sidebar: config health ── -->
+      <aside class="health-panel" id="health-panel">
+        <h2 class="panel-title">Config Health</h2>
+        <div id="health-content" class="health-loading">
+          <div class="spinner spinner-sm"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ── Install preview modal ── -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <header class="modal-header">
+          <h2 id="modal-title">Install Preview</h2>
+          <button id="modal-close" class="modal-close" aria-label="Close">✕</button>
+        </header>
+
+        <div id="modal-body" class="modal-body">
+          <div class="spinner"></div>
+        </div>
+
+        <footer class="modal-footer">
+          <button id="modal-cancel" class="btn btn-ghost">Cancel</button>
+          <button id="modal-confirm" class="btn btn-install" disabled>Confirm Install</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

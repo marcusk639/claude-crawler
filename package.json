@@ -1,0 +1,21 @@
+{
+  "name": "claude-crawler",
+  "version": "1.0.0",
+  "description": "Discover and install the best open-source Claude Code tools from GitHub, npm, and the web",
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0"
+  }
+}
