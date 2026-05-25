@@ -1,15 +1,18 @@
 "use strict";
 
 const { scanContent } = require("./scanner");
+const { scoreWithLLM } = require("./llm-scorer");
 
-function scoreCatalog(tools) {
-  return tools
-    .map((tool) => {
+async function scoreCatalog(tools) {
+  const scored = await Promise.all(
+    tools.map(async (tool) => {
       const contentWarnings = scanContent(tool);
-      const score = computeScore({ ...tool, contentWarnings });
-      return { ...tool, contentWarnings, score };
-    })
-    .sort((a, b) => b.score - a.score);
+      const llmScore = await scoreWithLLM(tool);
+      const score = computeScore({ ...tool, contentWarnings, llmScore });
+      return { ...tool, contentWarnings, llmScore, score };
+    }),
+  );
+  return scored.sort((a, b) => b.score - a.score);
 }
 
 function computeScore(tool) {
@@ -49,8 +52,24 @@ function computeScore(tool) {
     score += Math.min(5, Math.log10(tool.communityScore + 1) * 2);
   }
 
+  // LLM score bonus: quality avg → +10, relevance → +5, securityRisk → -20 penalty
+  if (tool.llmScore) {
+    const {
+      documentationQuality = 0,
+      installabilityScore = 0,
+      maintenanceSignals = 0,
+      securityRisk = 0,
+      relevanceToClaudeCode = 0,
+    } = tool.llmScore;
+    const qualityAvg =
+      (documentationQuality + installabilityScore + maintenanceSignals) / 3;
+    score += Math.min(10, (qualityAvg / 20) * 10);
+    score += Math.min(5, (relevanceToClaudeCode / 20) * 5);
+    score -= Math.min(20, (securityRisk / 20) * 20);
+  }
+
   // Penalties
-  score -= tool.contentWarnings.length * 20;
+  score -= (tool.contentWarnings || []).length * 20;
   if (!tool.description) score -= 5;
   if (!tool.license && tool.source !== "ecc") score -= 2;
 
