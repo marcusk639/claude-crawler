@@ -353,10 +353,41 @@ async function fetchInstallPreview(tool) {
   }
 }
 
+function renderLlmPanel(tool) {
+  const s = tool.llmScore;
+  if (!s) return "";
+  const dim = (label, value, riskClass = "") => `
+    <div class="llm-dim">
+      <span>${escHtml(label)}</span>
+      <span class="llm-bar${riskClass}" style="--pct:${(Number(value) || 0) * 5}%"></span>
+      <span>${escHtml(String(value ?? 0))}/20</span>
+    </div>`;
+  const flagsHtml =
+    Array.isArray(s.flags) && s.flags.length
+      ? `<ul class="llm-flags">${s.flags.map((f) => `<li>${escHtml(String(f))}</li>`).join("")}</ul>`
+      : "";
+  const reasoningHtml = s.reasoning
+    ? `<p class="llm-reasoning">${escHtml(String(s.reasoning))}</p>`
+    : "";
+  return `
+    <details class="llm-score-panel" open>
+      <summary>AI Analysis <span class="llm-badge">Hermes</span></summary>
+      <div class="llm-dims">
+        ${dim("Documentation", s.documentationQuality)}
+        ${dim("Installability", s.installabilityScore)}
+        ${dim("Maintenance", s.maintenanceSignals)}
+        ${dim("Security Risk", s.securityRisk, " risk")}
+        ${dim("Claude Relevance", s.relevanceToClaudeCode)}
+      </div>
+      ${reasoningHtml}
+      ${flagsHtml}
+    </details>`;
+}
+
 function renderInstallPreview(preview, tool) {
   const body = document.getElementById("modal-body");
   const confirmBtn = document.getElementById("modal-confirm");
-  let html = "";
+  let html = renderLlmPanel(tool);
 
   // Security warnings first
   const warnings = preview.warnings || [];

@@ -841,3 +841,72 @@ a:hover {
   animation: pulse-opacity 1.2s ease infinite;
   pointer-events: none;
 }
+
+/* ── LLM score panel (install modal) ─────────────────────────────── */
+.llm-score-panel {
+  margin: 0 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  background: rgba(124, 58, 237, 0.04);
+}
+.llm-score-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  list-style: none;
+}
+.llm-score-panel summary::-webkit-details-marker { display: none; }
+.llm-badge {
+  font-size: 0.7rem;
+  background: rgba(124, 58, 237, 0.18);
+  color: #a78bfa;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  letter-spacing: 0.02em;
+}
+.llm-dims {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.llm-dim {
+  display: grid;
+  grid-template-columns: 140px 1fr 50px;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.llm-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.llm-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--pct, 0%);
+  background: var(--accent, #7c3aed);
+  border-radius: 3px;
+}
+.llm-bar.risk::after {
+  background: #f59e0b;
+}
+.llm-reasoning {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+  font-style: italic;
+}
+.llm-flags {
+  font-size: 0.78rem;
+  color: #fca5a5;
+  margin: 0.4rem 0 0 1rem;
+  padding: 0;
+}
