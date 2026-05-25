@@ -57,8 +57,8 @@ app.get("/api/catalog", async (req, res) => {
 
     if (!catalogInFlight) {
       catalogInFlight = crawlAll()
-        .then((raw) => {
-          const scored = scoreCatalog(raw);
+        .then(async (raw) => {
+          const scored = await scoreCatalog(raw);
           cache.set("catalog", scored);
           return scored;
         })
@@ -110,7 +110,7 @@ app.post("/api/catalog/refresh", requireRefreshSecret, async (req, res) => {
   try {
     cache.clear();
     const raw = await crawlAll();
-    const scored = scoreCatalog(raw);
+    const scored = await scoreCatalog(raw);
     cache.set("catalog", scored);
     res.json({ ok: true, data: scored, count: scored.length });
   } catch (err) {
