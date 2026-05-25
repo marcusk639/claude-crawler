@@ -24,15 +24,15 @@ test("del removes an entry", () => {
 
 test("get returns null after TTL expires", async () => {
   cache.clear();
-  cache.set("expiring", "value", 0);
-  await new Promise((r) => setTimeout(r, 5));
+  cache.set("expiring", "value", 0); // 0 minutes → expires immediately
+  await new Promise((r) => setTimeout(r, 5)); // let clock advance past expiresAt
   assert.strictEqual(cache.get("expiring"), null);
 });
 
 test("size() counts only live entries, not expired ones", async () => {
   cache.clear();
-  cache.set("live", "value", 60);
-  cache.set("dead", "value", 0);
+  cache.set("live", "value", 60); // 60-minute TTL — alive
+  cache.set("dead", "value", 0); // 0-minute TTL — expires immediately
   await new Promise((r) => setTimeout(r, 5));
   assert.strictEqual(cache.size(), 1);
 });
