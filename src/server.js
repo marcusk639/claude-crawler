@@ -10,6 +10,29 @@ const { scoreCatalog } = require("./scoring");
 const { getInstallPreview, executeInstall } = require("./installer");
 const { scanLocalConfig } = require("./installer/health");
 const cache = require("./cache");
+const rateLimit = require("express-rate-limit");
+
+const installLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: "Too many install requests. Try again in a minute.",
+  },
+});
+
+const previewLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: "Too many preview requests. Try again in a minute.",
+  },
+});
 
 const app = express();
 const PORT = process.env.PORT || 3737;
@@ -128,7 +151,7 @@ function validateTool(tool) {
 }
 
 // POST /api/install/preview — returns diff of what would be installed
-app.post("/api/install/preview", async (req, res) => {
+app.post("/api/install/preview", previewLimiter, async (req, res) => {
   try {
     const { tool } = req.body;
     const err = validateTool(tool);
@@ -144,7 +167,7 @@ app.post("/api/install/preview", async (req, res) => {
 });
 
 // POST /api/install/execute — performs the install after user confirms
-app.post("/api/install/execute", async (req, res) => {
+app.post("/api/install/execute", installLimiter, async (req, res) => {
   try {
     const { tool } = req.body;
     const err = validateTool(tool);
