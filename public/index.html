@@ -16,6 +16,17 @@
         <div class="search-wrap">
           <input type="search" id="search" placeholder="Search tools…" autocomplete="off" />
         </div>
+        <div class="search-bar">
+          <input
+            type="search"
+            id="nlSearchInput"
+            placeholder="Ask: e.g. database migration tool"
+            autocomplete="off"
+            aria-label="Natural language search"
+          />
+          <button id="nlSearchClear" class="btn-ghost" hidden type="button">Clear</button>
+          <span id="nlSearchSpinner" class="spinner" hidden></span>
+        </div>
         <button id="btn-refresh" class="btn btn-primary" title="Re-crawl all sources">
           <span class="btn-icon">↻</span> Refresh
         </button>
