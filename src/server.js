@@ -7,6 +7,7 @@ const cors = require("cors");
 const path = require("path");
 const { crawlAll } = require("./crawlers");
 const { scoreCatalog } = require("./scoring");
+const { naturalLanguageSearch } = require("./search/llm-search");
 const { getInstallPreview, executeInstall } = require("./installer");
 const { scanLocalConfig } = require("./installer/health");
 const cache = require("./cache");
@@ -215,6 +216,49 @@ app.get("/api/health", async (req, res) => {
     res
       .status(500)
       .json({ ok: false, error: "Health check failed. Check server logs." });
+  }
+});
+
+// POST /api/search/natural — LLM-powered semantic search over the catalog
+const searchLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    error: "Too many search requests. Try again in a minute.",
+  },
+});
+
+app.post("/api/search/natural", searchLimiter, async (req, res) => {
+  try {
+    const { query } = req.body || {};
+    if (typeof query !== "string") {
+      return res
+        .status(400)
+        .json({ ok: false, error: "query must be a string" });
+    }
+    const catalog = cache.get("catalog");
+    if (!catalog) {
+      return res.status(503).json({
+        ok: false,
+        error: "Catalog not loaded yet. Visit /api/catalog first.",
+      });
+    }
+    const results = await naturalLanguageSearch(query, catalog);
+    res.json({ ok: true, results, query });
+  } catch (err) {
+    const isInputError = /characters/i.test(err.message);
+    const isConfigError = /LLM_API_KEY/.test(err.message);
+    const status = isInputError ? 400 : isConfigError ? 503 : 500;
+    const message = isInputError
+      ? err.message
+      : isConfigError
+        ? "Natural language search is not configured on this server."
+        : "Search failed. Check server logs.";
+    if (!isInputError && !isConfigError) console.error("Search error:", err);
+    res.status(status).json({ ok: false, error: message });
   }
 });
 
