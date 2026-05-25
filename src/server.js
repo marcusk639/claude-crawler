@@ -83,10 +83,15 @@ function requireRefreshSecret(req, res, next) {
   const secret = process.env.REFRESH_SECRET;
   if (!secret) return next(); // no secret configured — open in dev mode
   const auth = req.headers.authorization;
-  if (auth !== `Bearer ${secret}`) {
+  const expected = `Bearer ${secret}`;
+  if (
+    !auth ||
+    auth.length !== expected.length ||
+    !require("crypto").timingSafeEqual(Buffer.from(auth), Buffer.from(expected))
+  ) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
-  next();
+  return next();
 }
 
 // POST /api/catalog/refresh — clears cache and re-crawls
