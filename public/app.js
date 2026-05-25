@@ -18,6 +18,9 @@ const state = {
   installTool: null,
   installPreview: null,
   installState: "idle", // idle | loading | ready | executing | done
+  nlQuery: "",
+  nlResults: null, // null = inactive; array = LLM search results
+  nlLoading: false,
 };
 
 // ── Boot ───────────────────────────────────────
@@ -41,15 +44,25 @@ async function api(path, opts = {}) {
 
 // ── Control binding ────────────────────────────
 function bindControls() {
-  // Search (debounced)
+  // Keyword search (debounced, client-side filter)
   let searchTimer;
   document.getElementById("search").addEventListener("input", (e) => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
       state.filters.search = e.target.value.trim().toLowerCase();
+      // Keyword search and NL search are mutually exclusive
+      if (state.nlResults !== null) clearNlSearch({ skipInputReset: false });
       applyFiltersAndRender();
     }, 200);
   });
+
+  // Natural language search (debounced, server-side LLM)
+  document.getElementById("nlSearchInput").addEventListener("input", (e) => {
+    onNlSearch(e.target.value);
+  });
+  document
+    .getElementById("nlSearchClear")
+    .addEventListener("click", () => clearNlSearch());
 
   // Sort
   document.getElementById("sort-select").addEventListener("change", (e) => {
@@ -166,7 +179,71 @@ async function checkStatus() {
 }
 
 // ── Filtering & sorting ────────────────────────
+// ── Natural language search ────────────────────
+let nlDebounceTimer = null;
+
+async function onNlSearch(value) {
+  clearTimeout(nlDebounceTimer);
+  const trimmed = (value || "").trim();
+
+  if (!trimmed) {
+    clearNlSearch();
+    return;
+  }
+
+  if (trimmed.length < 3) return;
+
+  // Clear keyword search when activating NL search (mutually exclusive)
+  if (state.filters.search) {
+    state.filters.search = "";
+    document.getElementById("search").value = "";
+  }
+
+  nlDebounceTimer = setTimeout(async () => {
+    state.nlQuery = trimmed;
+    state.nlLoading = true;
+    document.getElementById("nlSearchSpinner").hidden = false;
+    document.getElementById("nlSearchClear").hidden = false;
+    applyFiltersAndRender();
+
+    try {
+      const data = await api("/api/search/natural", {
+        method: "POST",
+        body: JSON.stringify({ query: trimmed }),
+      });
+      state.nlResults = Array.isArray(data.results) ? data.results : [];
+    } catch (err) {
+      state.nlResults = [];
+      console.warn("[nl-search]", err.message);
+    } finally {
+      state.nlLoading = false;
+      document.getElementById("nlSearchSpinner").hidden = true;
+      applyFiltersAndRender();
+    }
+  }, 400);
+}
+
+function clearNlSearch(opts = {}) {
+  clearTimeout(nlDebounceTimer);
+  if (!opts.skipInputReset) {
+    document.getElementById("nlSearchInput").value = "";
+  }
+  state.nlQuery = "";
+  state.nlResults = null;
+  state.nlLoading = false;
+  document.getElementById("nlSearchClear").hidden = true;
+  document.getElementById("nlSearchSpinner").hidden = true;
+  applyFiltersAndRender();
+}
+
 function applyFiltersAndRender() {
+  // Natural language search results override filter state when active
+  if (state.nlResults !== null) {
+    state.filtered = state.nlResults;
+    renderGrid();
+    return;
+  }
+
   const { category, job, source, search, hideInstalled, officialOnly } =
     state.filters;
 
@@ -210,6 +287,12 @@ function renderGrid() {
   const grid = document.getElementById("catalog-grid");
   const countEl = document.getElementById("result-count");
 
+  if (state.nlLoading) {
+    grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Searching with AI for "${escHtml(state.nlQuery)}"…</p></div>`;
+    countEl.textContent = "Searching…";
+    return;
+  }
+
   if (state.loading) {
     grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Crawling sources…</p></div>`;
     countEl.textContent = "Loading…";
@@ -223,12 +306,24 @@ function renderGrid() {
   }
 
   if (!state.filtered.length) {
-    grid.innerHTML = `<div class="empty-state"><p>No tools match your filters.</p><button class="btn btn-ghost btn-sm" onclick="clearFilters()">Clear filters</button></div>`;
+    const msg =
+      state.nlResults !== null
+        ? `No tools matched "${escHtml(state.nlQuery)}". Try a broader query.`
+        : "No tools match your filters.";
+    const action =
+      state.nlResults !== null
+        ? `<button class="btn btn-ghost btn-sm" onclick="clearNlSearch()">Clear search</button>`
+        : `<button class="btn btn-ghost btn-sm" onclick="clearFilters()">Clear filters</button>`;
+    grid.innerHTML = `<div class="empty-state"><p>${msg}</p>${action}</div>`;
     countEl.textContent = `0 of ${state.catalog.length} tools`;
     return;
   }
 
-  countEl.textContent = `${state.filtered.length} of ${state.catalog.length} tools`;
+  const label =
+    state.nlResults !== null
+      ? `${state.filtered.length} AI-matched ${state.filtered.length === 1 ? "tool" : "tools"} for "${state.nlQuery}"`
+      : `${state.filtered.length} of ${state.catalog.length} tools`;
+  countEl.textContent = label;
   grid.innerHTML = state.filtered.map(renderCard).join("");
 }
 
@@ -273,6 +368,7 @@ function renderCard(tool) {
         <div class="card-author">${escHtml(tool.author)}${tool.source !== tool.author ? ` · ${escHtml(tool.source)}` : ""}</div>
       </div>
       <p class="card-description">${escHtml(tool.description || "No description available.")}</p>
+      ${tool.searchReasoning ? `<p class="search-reasoning">${escHtml(tool.searchReasoning)}</p>` : ""}
       <div class="card-meta">${metaItems}</div>
       <div class="score-bar-wrap">
         <div class="score-bar-bg">
