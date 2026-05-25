@@ -77,7 +77,20 @@ app.get("/api/catalog", async (req, res) => {
 });
 
 // POST /api/catalog/refresh — clears cache and re-crawls
-app.post("/api/catalog/refresh", async (req, res) => {
+
+// Middleware: validate Bearer token for refresh endpoint
+function requireRefreshSecret(req, res, next) {
+  const secret = process.env.REFRESH_SECRET;
+  if (!secret) return next(); // no secret configured — open in dev mode
+  const auth = req.headers.authorization;
+  if (auth !== `Bearer ${secret}`) {
+    return res.status(401).json({ ok: false, error: "Unauthorized" });
+  }
+  next();
+}
+
+// POST /api/catalog/refresh — clears cache and re-crawls
+app.post("/api/catalog/refresh", requireRefreshSecret, async (req, res) => {
   const now = Date.now();
   if (now - lastRefresh < REFRESH_COOLDOWN_MS) {
     const waitSec = Math.ceil(
@@ -218,7 +231,10 @@ app.listen(PORT, "127.0.0.1", () => {
     `GitHub API: ${process.env.GITHUB_TOKEN ? "authenticated (5000 req/hr)" : "unauthenticated (60 req/hr)"}`,
   );
   console.log(
-    `Google Search: ${process.env.GOOGLE_API_KEY && process.env.GOOGLE_CSE_ID ? "enabled" : "disabled"}\n`,
+    `Google Search: ${process.env.GOOGLE_API_KEY && process.env.GOOGLE_CSE_ID ? "enabled" : "disabled"}`,
+  );
+  console.log(
+    `Refresh endpoint: ${process.env.REFRESH_SECRET ? "protected (REFRESH_SECRET set)" : "open (set REFRESH_SECRET to protect)"}\n`,
   );
 });
 
