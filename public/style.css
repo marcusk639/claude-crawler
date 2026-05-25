@@ -910,3 +910,45 @@ a:hover {
   margin: 0.4rem 0 0 1rem;
   padding: 0;
 }
+
+/* ── Natural language search bar (header) ────────────────────────── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 260px;
+  max-width: 340px;
+}
+.search-bar input[type="search"] {
+  flex: 1;
+  background: var(--surface, #1a1a1a);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+  min-width: 0;
+}
+.search-bar input[type="search"]:focus {
+  border-color: var(--accent);
+}
+.search-bar input[type="search"]::placeholder {
+  color: var(--text-muted);
+}
+.search-bar .spinner {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  flex-shrink: 0;
+}
+
+.search-reasoning {
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-style: italic;
+  margin: 0.25rem 0 0;
+  line-height: 1.4;
+  border-left: 2px solid var(--accent);
+  padding-left: 0.5rem;
+}
