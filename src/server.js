@@ -10,6 +10,7 @@ const { scoreCatalog } = require("./scoring");
 const { naturalLanguageSearch } = require("./search/llm-search");
 const { getInstallPreview, executeInstall } = require("./installer");
 const { scanLocalConfig } = require("./installer/health");
+const { generateStaticPages } = require("./seo/generator");
 const cache = require("./cache");
 require("./firebase"); // initialize Firebase Admin SDK (no-op if env vars not set)
 const userRoutes = require("./routes/users");
@@ -48,6 +49,14 @@ const ALLOWED_ORIGINS = [
 ].filter(Boolean);
 app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json({ limit: "10kb" }));
+// SEO static pages — must be mounted BEFORE public/ so /tools/... resolves
+// to the pre-rendered HTML files instead of falling through to the SPA.
+// `extensions: ["html"]` lets `/tools/x/y` resolve to `tools/x/y.html`.
+app.use(
+  express.static(path.join(__dirname, "..", "data/static"), {
+    extensions: ["html"],
+  }),
+);
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/api/user", userRoutes);
 
@@ -69,6 +78,9 @@ app.get("/api/catalog", async (req, res) => {
         .then(async (raw) => {
           const scored = await scoreCatalog(raw);
           cache.set("catalog", scored);
+          generateStaticPages(scored).catch((err) =>
+            console.error("SEO generation failed:", err),
+          );
           return scored;
         })
         .finally(() => {
@@ -121,6 +133,9 @@ app.post("/api/catalog/refresh", requireRefreshSecret, async (req, res) => {
     const raw = await crawlAll();
     const scored = await scoreCatalog(raw);
     cache.set("catalog", scored);
+    generateStaticPages(scored).catch((err) =>
+      console.error("SEO generation failed:", err),
+    );
     res.json({ ok: true, data: scored, count: scored.length });
   } catch (err) {
     console.error("Refresh error:", err);
