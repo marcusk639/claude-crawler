@@ -13,6 +13,7 @@ const state = {
     search: "",
     hideInstalled: false,
     officialOnly: false,
+    savedOnly: false,
   },
   sort: "score",
   installTool: null,
@@ -21,7 +22,13 @@ const state = {
   nlQuery: "",
   nlResults: null, // null = inactive; array = LLM search results
   nlLoading: false,
+  localBridge: false, // true when localhost:3737 is reachable
+  currentUser: null, // Firebase user object or null
+  savedToolIds: new Set(), // IDs of tools saved by current user
 };
+
+// Current Firebase ID token — refreshed automatically by Firebase SDK
+let idToken = null;
 
 // ── Boot ───────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
@@ -29,17 +36,141 @@ document.addEventListener("DOMContentLoaded", () => {
   checkStatus();
   loadHealth();
   loadCatalog();
+  initAuth();
+  detectLocalBridge();
 });
 
 // ── API helpers ────────────────────────────────
 async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
-    ...opts,
-  });
+  const headers = { "Content-Type": "application/json" };
+  if (idToken) headers["Authorization"] = `Bearer ${idToken}`;
+  const res = await fetch(path, { headers, ...opts });
   const data = await res.json();
   if (!data.ok) throw new Error(data.error || "API error");
   return data;
+}
+
+// ── Auth ───────────────────────────────────────
+function initAuth() {
+  firebase.auth().onAuthStateChanged(async (user) => {
+    state.currentUser = user;
+    idToken = user ? await user.getIdToken() : null;
+
+    const btnSignin = document.getElementById("btn-signin");
+    const userMenu = document.getElementById("user-menu");
+    const userAvatar = document.getElementById("user-avatar");
+    const userName = document.getElementById("user-name");
+
+    if (user) {
+      btnSignin.classList.add("hidden");
+      userMenu.classList.remove("hidden");
+      userAvatar.src = user.photoURL || "";
+      userAvatar.alt = user.displayName || "";
+      userName.textContent = user.displayName || user.email || "";
+      await loadSavedTools();
+    } else {
+      btnSignin.classList.remove("hidden");
+      userMenu.classList.add("hidden");
+      state.savedToolIds = new Set();
+    }
+    applyFiltersAndRender();
+  });
+
+  // Refresh token silently before it expires (Firebase tokens expire after 1hr)
+  setInterval(
+    async () => {
+      if (state.currentUser) {
+        idToken = await state.currentUser.getIdToken(true);
+      }
+    },
+    55 * 60 * 1000,
+  );
+}
+
+async function loadSavedTools() {
+  try {
+    const { tools } = await api("/api/user/saved-tools");
+    state.savedToolIds = new Set(tools.map((t) => t.id));
+  } catch (err) {
+    console.warn("Could not load saved tools:", err.message);
+    state.savedToolIds = new Set();
+  }
+}
+
+async function toggleSave(toolId) {
+  if (!state.currentUser) {
+    document.getElementById("auth-modal-overlay").classList.remove("hidden");
+    return;
+  }
+  const isSaved = state.savedToolIds.has(toolId);
+  if (isSaved) {
+    state.savedToolIds.delete(toolId);
+    applyFiltersAndRender();
+    await api(`/api/user/saved-tools/${encodeURIComponent(toolId)}`, {
+      method: "DELETE",
+    });
+  } else {
+    state.savedToolIds.add(toolId);
+    applyFiltersAndRender();
+    const tool = state.catalog.find((t) => t.id === toolId);
+    if (tool) {
+      await api("/api/user/saved-tools", {
+        method: "POST",
+        body: JSON.stringify({
+          toolId,
+          name: tool.name || tool.displayName || "",
+          description: tool.description || "",
+          source: tool.source || "",
+        }),
+      });
+    }
+  }
+}
+
+function openAuthModal() {
+  document.getElementById("auth-modal-overlay").classList.remove("hidden");
+}
+
+function closeAuthModal() {
+  document.getElementById("auth-modal-overlay").classList.add("hidden");
+}
+
+async function signInWith(provider) {
+  let authProvider;
+  if (provider === "github") {
+    authProvider = new firebase.auth.GithubAuthProvider();
+  } else if (provider === "google") {
+    authProvider = new firebase.auth.GoogleAuthProvider();
+  } else if (provider === "apple") {
+    authProvider = new firebase.auth.OAuthProvider("apple.com");
+  } else {
+    return;
+  }
+  try {
+    await firebase.auth().signInWithPopup(authProvider);
+    closeAuthModal();
+  } catch (err) {
+    console.error("Sign-in error:", err);
+    alert(`Sign-in failed: ${err.message}`);
+  }
+}
+
+// ── Local Bridge ───────────────────────────────
+async function detectLocalBridge() {
+  try {
+    await fetch("http://localhost:3737/api/health", {
+      signal: AbortSignal.timeout(1000),
+    });
+    state.localBridge = true;
+  } catch {
+    state.localBridge = false;
+  }
+  const chip = document.getElementById("bridge-chip");
+  if (state.localBridge) {
+    chip.classList.remove("hidden");
+  } else {
+    chip.classList.add("hidden");
+  }
 }
 
 // ── Control binding ────────────────────────────
@@ -120,6 +251,47 @@ function bindFilterGroup(groupId, filterKey) {
     btn.classList.add("active");
     state.filters[filterKey] = btn.dataset.value;
     applyFiltersAndRender();
+  });
+
+  // Auth
+  document
+    .getElementById("btn-signin")
+    .addEventListener("click", openAuthModal);
+  document
+    .getElementById("auth-modal-close")
+    .addEventListener("click", closeAuthModal);
+  document
+    .getElementById("auth-modal-overlay")
+    .addEventListener("click", (e) => {
+      if (e.target === document.getElementById("auth-modal-overlay"))
+        closeAuthModal();
+    });
+  document.getElementById("btn-signout").addEventListener("click", () => {
+    firebase.auth().signOut();
+  });
+  document.querySelectorAll(".auth-provider-btn").forEach((btn) => {
+    btn.addEventListener("click", () => signInWith(btn.dataset.provider));
+  });
+
+  // No-bridge modal
+  document.getElementById("no-bridge-close").addEventListener("click", () => {
+    document.getElementById("no-bridge-modal-overlay").classList.add("hidden");
+  });
+  document
+    .getElementById("no-bridge-retry")
+    .addEventListener("click", async () => {
+      await detectLocalBridge();
+      if (state.localBridge) {
+        document
+          .getElementById("no-bridge-modal-overlay")
+          .classList.add("hidden");
+      }
+    });
+
+  // Save/unsave button (delegated from catalog grid)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-save-id]");
+    if (btn) toggleSave(btn.dataset.saveId);
   });
 }
 
@@ -253,6 +425,7 @@ function applyFiltersAndRender() {
     if (source !== "all" && t.source !== source) return false;
     if (hideInstalled && t.installed) return false;
     if (officialOnly && !t.isOfficial) return false;
+    if (state.filters.savedOnly && !state.savedToolIds.has(t.id)) return false;
     if (search) {
       const hay =
         `${t.displayName || t.name} ${t.description} ${t.author} ${(t.topics || []).join(" ")}`.toLowerCase();
@@ -378,6 +551,12 @@ function renderCard(tool) {
       </div>
       <div class="card-footer">
         ${tool.url ? `<a class="card-link" href="${escHtml(tool.url)}" target="_blank" rel="noopener">${escHtml(shortUrl(tool.url))}</a>` : '<span class="card-link"></span>'}
+        <button
+          class="btn-save${state.savedToolIds.has(tool.id) ? " saved" : ""}"
+          data-save-id="${escHtml(tool.id)}"
+          title="${state.savedToolIds.has(tool.id) ? "Remove from saved" : "Save tool"}"
+          aria-label="${state.savedToolIds.has(tool.id) ? "Remove from saved" : "Save tool"}"
+        >&#9825;</button>
         ${canInstall ? `<button class="btn btn-primary btn-sm" data-install-id="${escHtml(tool.id)}">${installBtnLabel}</button>` : ""}
       </div>
     </article>`;
@@ -542,9 +721,28 @@ function renderInstallPreview(preview, tool) {
         ${fileListHtml}
       </div>`;
 
-    confirmBtn.disabled = files.length === 0;
-    confirmBtn.textContent = "Confirm Install";
-    confirmBtn.onclick = executeInstall;
+    if (!state.localBridge) {
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "No local installer";
+      const hint = document.createElement("p");
+      hint.style.cssText =
+        "margin-top:8px;font-size:12px;color:var(--text-muted)";
+      hint.innerHTML =
+        '<a href="#" id="open-no-bridge" style="color:var(--accent)">Set up the local installer</a> to enable one-click installs.';
+      body.appendChild(hint);
+      document
+        .getElementById("open-no-bridge")
+        ?.addEventListener("click", (e) => {
+          e.preventDefault();
+          document
+            .getElementById("no-bridge-modal-overlay")
+            .classList.remove("hidden");
+        });
+    } else {
+      confirmBtn.disabled = files.length === 0;
+      confirmBtn.textContent = "Confirm Install";
+      confirmBtn.onclick = executeInstall;
+    }
   } else {
     html += `<div class="preview-message">${escHtml(preview.message || "Nothing to install.")}</div>`;
     confirmBtn.disabled = true;
@@ -564,10 +762,16 @@ async function executeInstall() {
   body.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Installing…</p></div>`;
 
   try {
-    const { result } = await api("/api/install/execute", {
+    const installUrl = state.localBridge
+      ? "http://localhost:3737/api/install/execute"
+      : "/api/install/execute";
+    const installRes = await fetch(installUrl, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tool: state.installTool }),
-    });
+    }).then((r) => r.json());
+    if (!installRes.ok) throw new Error(installRes.error || "Install failed");
+    const { result } = installRes;
 
     const cls = result.success ? "success" : "error";
     const installedFiles = (result.installed || [])
