@@ -952,3 +952,116 @@ a:hover {
   border-left: 2px solid var(--accent);
   padding-left: 0.5rem;
 }
+
+/* ── Auth UI ──────────────────────────────────────────────────────────────── */
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-modal {
+  max-width: 340px;
+  text-align: center;
+}
+
+.auth-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.auth-providers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.auth-provider-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.auth-provider-btn:hover {
+  border-color: var(--accent);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+/* ── Local bridge chip ────────────────────────────────────────────────────── */
+
+.bridge-chip {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  white-space: nowrap;
+}
+
+/* ── Save button on tool cards ───────────────────────────────────────────── */
+
+.btn-save {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.btn-save:hover {
+  color: var(--text);
+}
+
+.btn-save.saved {
+  color: var(--accent);
+}
+
+/* ── No-bridge modal ─────────────────────────────────────────────────────── */
+
+.no-bridge-modal {
+  max-width: 380px;
+  text-align: center;
+}
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin: 0.75rem 0;
+  user-select: all;
+}
