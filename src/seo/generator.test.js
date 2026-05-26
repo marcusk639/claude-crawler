@@ -143,3 +143,33 @@ test("generateStaticPages skips tools that slugify to empty", async () => {
     await fs.remove(outDir);
   }
 });
+
+test("generateStaticPages disambiguates 3+ tools sharing name AND source", async () => {
+  const outDir = await mkTmp();
+  try {
+    const tools = [
+      makeTool({ name: "auth-helper", source: "github", author: "a" }),
+      makeTool({ name: "auth-helper", source: "github", author: "b" }),
+      makeTool({ name: "auth-helper", source: "github", author: "c" }),
+    ];
+    const result = await generateStaticPages(tools, { outDir, siteUrl });
+    const files = await fs.readdir(path.join(outDir, "tools/mcp-servers"));
+    assert.strictEqual(
+      files.length,
+      3,
+      "three distinct files for triple collision",
+    );
+    assert.strictEqual(result.toolsWritten, 3);
+    const xml = await fs.readFile(path.join(outDir, "sitemap.xml"), "utf8");
+    const locs = [...xml.matchAll(/<loc>([^<]+auth-helper[^<]*)<\/loc>/g)].map(
+      (m) => m[1],
+    );
+    assert.strictEqual(
+      locs.length,
+      new Set(locs).size,
+      "no duplicate sitemap entries",
+    );
+  } finally {
+    await fs.remove(outDir);
+  }
+});

@@ -26,7 +26,7 @@ const DEFAULT_OUT_DIR = path.join(__dirname, "..", "..", "data/static");
 // Returns a NEW array of tools with `_slug` (final slug) and `_url` set.
 // Tools that slugify to empty are filtered out.
 function assignSlugs(tools) {
-  const seen = new Map();
+  const taken = new Set();
   const result = [];
   let skipped = 0;
   for (const tool of tools) {
@@ -36,13 +36,20 @@ function assignSlugs(tools) {
       continue;
     }
     const category = tool.category || "tools";
-    const key = `${category}/${base}`;
-    const count = seen.get(key) || 0;
-    seen.set(key, count + 1);
-    const slug =
-      count === 0 ? base : `${base}-${slugify(tool.source || String(count))}`;
-    const finalUrl = `/tools/${category}/${slug}`;
-    result.push({ ...tool, _slug: slug, _url: finalUrl });
+    const sourceSuffix = slugify(tool.source || "");
+    // Resolution order: base → base-source → base-source-2, base-source-3, …
+    // Guarantees uniqueness regardless of how many tools share name+source.
+    const candidates = [base];
+    if (sourceSuffix) candidates.push(`${base}-${sourceSuffix}`);
+    let slug = candidates.find((c) => !taken.has(`${category}/${c}`));
+    if (!slug) {
+      const stem = sourceSuffix ? `${base}-${sourceSuffix}` : base;
+      let n = 2;
+      while (taken.has(`${category}/${stem}-${n}`)) n += 1;
+      slug = `${stem}-${n}`;
+    }
+    taken.add(`${category}/${slug}`);
+    result.push({ ...tool, _slug: slug, _url: `/tools/${category}/${slug}` });
   }
   return { tools: result, skipped };
 }
