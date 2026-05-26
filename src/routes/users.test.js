@@ -3,19 +3,11 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 
-// Test the validation helpers extracted from the route handlers.
-// Full CRUD integration tests require a live Firestore — covered by smoke testing.
+// Import the actual production helpers so tests exercise the live code path.
+// The Router itself can't be unit-tested without a live Firestore; the helpers can.
+const { validateSaveBody, validateToolIdParam } = require("./users");
 
-function validateSaveBody({ toolId, name }) {
-  if (!toolId || typeof toolId !== "string" || toolId.trim().length === 0) {
-    return "toolId is required";
-  }
-  if (toolId.length > 200) return "toolId must be 200 characters or fewer";
-  if (!name || typeof name !== "string" || name.trim().length === 0) {
-    return "name is required";
-  }
-  return null;
-}
+// ── validateSaveBody ────────────────────────────────────────────────────────
 
 test("validateSaveBody: missing toolId returns error", () => {
   assert.strictEqual(
@@ -45,9 +37,43 @@ test("validateSaveBody: missing name returns error", () => {
   );
 });
 
+test("validateSaveBody: non-string name returns error", () => {
+  assert.strictEqual(
+    validateSaveBody({ toolId: "npm:pg-mcp", name: 42 }),
+    "name is required",
+  );
+});
+
 test("validateSaveBody: valid input returns null", () => {
   assert.strictEqual(
     validateSaveBody({ toolId: "npm:pg-mcp", name: "pg-mcp" }),
     null,
   );
+});
+
+// ── validateToolIdParam (used on DELETE path) ───────────────────────────────
+
+test("validateToolIdParam: empty string returns error", () => {
+  assert.strictEqual(validateToolIdParam(""), "toolId is required");
+});
+
+test("validateToolIdParam: whitespace-only returns error", () => {
+  assert.strictEqual(validateToolIdParam("   "), "toolId is required");
+});
+
+test("validateToolIdParam: > 200 chars returns error", () => {
+  assert.strictEqual(
+    validateToolIdParam("x".repeat(201)),
+    "toolId must be 200 characters or fewer",
+  );
+});
+
+test("validateToolIdParam: non-string returns error", () => {
+  assert.strictEqual(validateToolIdParam(42), "toolId is required");
+  assert.strictEqual(validateToolIdParam(undefined), "toolId is required");
+  assert.strictEqual(validateToolIdParam(null), "toolId is required");
+});
+
+test("validateToolIdParam: valid id returns null", () => {
+  assert.strictEqual(validateToolIdParam("npm:pg-mcp"), null);
 });

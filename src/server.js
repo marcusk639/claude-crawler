@@ -154,6 +154,17 @@ const VALID_NPM_PKG_RE = /^@?[a-zA-Z0-9][a-zA-Z0-9._-]*(?:\/[a-zA-Z0-9._-]+)?$/;
 const VALID_NPM_CMD_RE =
   /^npm install -g @?[a-zA-Z0-9][a-zA-Z0-9._-]*(?:\/[a-zA-Z0-9._-]+)?$/;
 
+// GitHub repo names: "owner/repo" — no path traversal, no query-param injection
+const VALID_REPO_RE =
+  /^[a-zA-Z0-9][a-zA-Z0-9._-]*\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/;
+
+const GITHUB_INSTALL_TYPES = new Set([
+  "github-file",
+  "github-dir",
+  "github-repo",
+  "mcp-server",
+]);
+
 function validateTool(tool) {
   if (!tool || typeof tool !== "object") return "tool must be an object";
   if (typeof tool.name !== "string" || !tool.name.trim())
@@ -172,6 +183,14 @@ function validateTool(tool) {
     }
     if (config.npmInstallCmd && !VALID_NPM_CMD_RE.test(config.npmInstallCmd)) {
       return "invalid npmInstallCmd format";
+    }
+  }
+  if (GITHUB_INSTALL_TYPES.has(config.type)) {
+    if (config.repoFullName && !VALID_REPO_RE.test(config.repoFullName)) {
+      return "invalid repoFullName format (expected owner/repo)";
+    }
+    if (config.repoFullName && config.repoFullName.length > 140) {
+      return "repoFullName too long";
     }
   }
   return null;

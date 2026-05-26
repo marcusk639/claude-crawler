@@ -19,6 +19,15 @@ function validateSaveBody({ toolId, name }) {
   return null;
 }
 
+// Used for DELETE path-param validation as well — same shape as toolId in the body.
+function validateToolIdParam(toolId) {
+  if (!toolId || typeof toolId !== "string" || toolId.trim().length === 0) {
+    return "toolId is required";
+  }
+  if (toolId.length > 200) return "toolId must be 200 characters or fewer";
+  return null;
+}
+
 // GET /api/user/saved-tools
 router.get("/saved-tools", async (req, res) => {
   if (!db)
@@ -55,8 +64,9 @@ router.post("/saved-tools", async (req, res) => {
       .set({
         savedAt: new Date().toISOString(),
         name: name.slice(0, 200),
-        description: description.slice(0, 500),
-        source,
+        description:
+          typeof description === "string" ? description.slice(0, 500) : "",
+        source: typeof source === "string" ? source.slice(0, 500) : "",
       });
     res.json({ ok: true });
   } catch (err) {
@@ -69,6 +79,8 @@ router.post("/saved-tools", async (req, res) => {
 router.delete("/saved-tools/:toolId", async (req, res) => {
   if (!db)
     return res.status(503).json({ ok: false, error: "Auth not configured" });
+  const paramError = validateToolIdParam(req.params.toolId);
+  if (paramError) return res.status(400).json({ ok: false, error: paramError });
   try {
     await db
       .collection("users")
@@ -84,3 +96,5 @@ router.delete("/saved-tools/:toolId", async (req, res) => {
 });
 
 module.exports = router;
+module.exports.validateSaveBody = validateSaveBody;
+module.exports.validateToolIdParam = validateToolIdParam;
