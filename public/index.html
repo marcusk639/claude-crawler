@@ -10,14 +10,17 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script>
-      // Replace these values with your Firebase project's config.
-      // Find them at: Firebase console → Project Settings → Your apps → SDK setup
-      // These are NOT secrets — safe to commit.
+      // Firebase config — these are PUBLIC identifiers, safe to commit.
+      // The compat scripts above expose a global `firebase` object that
+      // public/app.js uses (firebase.auth(), firebase.auth.GithubAuthProvider, etc).
+      // Do NOT switch to modular ESM imports without rewriting app.js.
       firebase.initializeApp({
-        apiKey: "REPLACE_WITH_YOUR_API_KEY",
-        authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-        projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
-        appId: "REPLACE_WITH_YOUR_APP_ID",
+        apiKey: "AIzaSyAUsJpw-ybyn0wx4S2BJ5eham0gBCK0Byc",
+        authDomain: "claude-crawler.firebaseapp.com",
+        projectId: "claude-crawler",
+        storageBucket: "claude-crawler.firebasestorage.app",
+        messagingSenderId: "1023340404356",
+        appId: "1:1023340404356:web:b8607023e1b27394f26cd1",
       });
     </script>
   </head>
