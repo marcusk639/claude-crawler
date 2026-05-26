@@ -186,3 +186,43 @@ test("renderJobPage sets body[data-static-page=job]", () => {
   });
   assert.match(html, /<body[^>]*data-static-page="job"/);
 });
+
+const { renderHomepage } = require("./templates");
+
+test("renderHomepage embeds seed tool cards into #catalog-grid", () => {
+  const tools = [fixtureTool, { ...fixtureTool, id: "y", name: "second" }];
+  const html = renderHomepage(tools, { siteUrl });
+  const gridMatch = html.match(
+    /<div id="catalog-grid"[^>]*>([\s\S]*?)<\/div>\s*<\/main>/,
+  );
+  assert.ok(gridMatch, "catalog-grid present");
+  assert.match(gridMatch[1], /pg-mcp/);
+  assert.match(gridMatch[1], /second/);
+});
+
+test("renderHomepage omits data-static-page attribute on body", () => {
+  const html = renderHomepage([fixtureTool], { siteUrl });
+  assert.doesNotMatch(html, /<body[^>]*data-static-page=/);
+});
+
+test("renderHomepage emits WebSite JSON-LD with SearchAction", () => {
+  const html = renderHomepage([fixtureTool], { siteUrl });
+  const matches = [
+    ...html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    ),
+  ];
+  const website = matches
+    .map((m) => JSON.parse(m[1]))
+    .find((j) => j["@type"] === "WebSite");
+  assert.ok(website, "WebSite JSON-LD present");
+  assert.strictEqual(website.potentialAction["@type"], "SearchAction");
+});
+
+test("renderHomepage canonical equals siteUrl + /", () => {
+  const html = renderHomepage([fixtureTool], { siteUrl });
+  assert.match(
+    html,
+    /<link rel="canonical" href="https:\/\/example\.com\/"\/>/,
+  );
+});

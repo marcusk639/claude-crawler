@@ -369,10 +369,109 @@ function renderJobPage(job, tools, { siteUrl, generatedAt }) {
 </html>`;
 }
 
+function renderHomepage(tools, { siteUrl }) {
+  const canonical = `${siteUrl}/`;
+  const title =
+    "Claude Crawler — Discover & install the best Claude Code tools";
+  const description =
+    "A curated, security-scanned catalog of MCP servers, agents, skills, hooks, and templates for Claude Code — ranked by quality and updated continuously.";
+
+  const ldWebsite = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Claude Crawler",
+    url: canonical,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  // Seed the SPA grid so bots and slow-JS users see content immediately.
+  // app.js detects the seed and replaces it on first applyFiltersAndRender().
+  const seedCards = tools.map(renderListingCard).join("");
+
+  return `<!doctype html>
+<html lang="en">
+  <head>${renderHead({
+    title,
+    description,
+    canonical,
+    ogType: "website",
+    ogImage: `${siteUrl}/og-default.png`,
+    jsonLd: [ldWebsite],
+  })}</head>
+  <body>
+    ${renderSiteHeader()}
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="filter-section">
+          <h3 class="filter-label">Category</h3>
+          <div class="filter-group" id="filter-category">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="mcp-servers">MCP Servers</button>
+            <button class="filter-btn" data-value="agents">Agents</button>
+            <button class="filter-btn" data-value="skills">Skills</button>
+            <button class="filter-btn" data-value="templates">Templates</button>
+            <button class="filter-btn" data-value="hooks">Hooks</button>
+            <button class="filter-btn" data-value="tools">Tools</button>
+            <button class="filter-btn" data-value="plugins">Plugins</button>
+          </div>
+        </section>
+        <section class="filter-section">
+          <h3 class="filter-label">Job</h3>
+          <div class="filter-group" id="filter-job">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="automate-workflow">Automate Workflow</button>
+            <button class="filter-btn" data-value="code-quality">Code Quality</button>
+            <button class="filter-btn" data-value="language-support">Language Support</button>
+            <button class="filter-btn" data-value="external-services">External Services</button>
+            <button class="filter-btn" data-value="ai-enhancement">AI Enhancement</button>
+            <button class="filter-btn" data-value="project-management">Project Management</button>
+          </div>
+        </section>
+        <section class="filter-section">
+          <h3 class="filter-label">Source</h3>
+          <div class="filter-group" id="filter-source">
+            <button class="filter-btn active" data-value="all">All</button>
+            <button class="filter-btn" data-value="github">GitHub</button>
+            <button class="filter-btn" data-value="npm">npm</button>
+            <button class="filter-btn" data-value="anthropic">Official</button>
+            <button class="filter-btn" data-value="web">Community</button>
+            <button class="filter-btn" data-value="ecc">Local</button>
+          </div>
+        </section>
+        <section class="filter-section">
+          <h3 class="filter-label">Sort by</h3>
+          <select id="sort-select" class="sort-select">
+            <option value="score">Score</option>
+            <option value="stars">Stars</option>
+            <option value="downloads">Downloads</option>
+            <option value="updated">Newest</option>
+            <option value="name">Name</option>
+          </select>
+        </section>
+      </aside>
+      <main class="main-content">
+        <div id="toolbar" class="toolbar">
+          <span id="result-count" class="result-count">Loading…</span>
+          <label class="toggle-wrap"><input type="checkbox" id="hide-installed" /><span>Hide installed</span></label>
+          <label class="toggle-wrap"><input type="checkbox" id="official-only" /><span>Official only</span></label>
+        </div>
+        <div id="catalog-grid" class="catalog-grid" data-seeded="true">${seedCards}</div>
+      </main>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>`;
+}
+
 module.exports = {
   renderToolPage,
   renderCategoryPage,
   renderJobPage,
+  renderHomepage,
   renderListingCard,
   // exported for testing and reuse by later tasks
   escHtml,
