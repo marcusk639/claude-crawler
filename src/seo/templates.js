@@ -2,6 +2,7 @@
 
 const { toolUrl, categoryUrl } = require("./slug");
 const { CATEGORY_DISPLAY } = require("./constants");
+const { CATEGORY_INTRO, JOB_INTRO, JOB_DISPLAY } = require("./constants");
 
 const DESC_LEN = 155;
 
@@ -243,8 +244,79 @@ function renderToolPage(tool, { siteUrl, relatedTools = [] }) {
 </html>`;
 }
 
+function renderListingCard(tool) {
+  return `
+    <a class="listing-card" href="${escAttr(toolUrl(tool))}">
+      <div class="listing-name">${escHtml(tool.displayName || tool.name)}</div>
+      <div class="listing-meta">
+        ${tool.author ? `<span>${escHtml(tool.author)}</span>` : ""}
+        ${tool.score !== undefined ? `<span>Score ${escHtml(tool.score)}</span>` : ""}
+        ${tool.stars > 0 ? `<span>★ ${escHtml(tool.stars)}</span>` : ""}
+      </div>
+      <p class="listing-desc">${escHtml(truncate(tool.description, 140))}</p>
+    </a>`;
+}
+
+function renderCategoryPage(category, tools, { siteUrl, generatedAt }) {
+  const catDisplay = categoryDisplay(category);
+  const canonical = `${siteUrl}${categoryUrl(category)}`;
+  const title = `Best ${catDisplay} for Claude Code (2026)`;
+  const intro = CATEGORY_INTRO[category] || "";
+  const description = `Discover the top ${tools.length} ${catDisplay.toLowerCase()} for Claude Code, ranked by quality and security. Updated ${generatedAt}.`;
+
+  const ldItemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: title,
+    itemListElement: tools.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${siteUrl}${toolUrl(t)}`,
+      name: t.name,
+    })),
+  };
+  const ldBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: catDisplay,
+        item: canonical,
+      },
+    ],
+  };
+
+  return `<!doctype html>
+<html lang="en">
+  <head>${renderHead({
+    title,
+    description,
+    canonical,
+    ogType: "website",
+    ogImage: `${siteUrl}/og-default.png`,
+    jsonLd: [ldItemList, ldBreadcrumb],
+  })}</head>
+  <body data-static-page="category">
+    ${renderSiteHeader()}
+    <main class="landing">
+      ${renderBreadcrumbNav([{ label: "Home", href: "/" }, { label: catDisplay }])}
+      <h1>Best ${escHtml(catDisplay)} for Claude Code</h1>
+      <p class="landing-intro">${escHtml(intro)}</p>
+      <div class="listing-grid">${tools.map(renderListingCard).join("")}</div>
+      <p class="landing-footer"><a href="/">Browse all ${escHtml(catDisplay.toLowerCase())} →</a></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>`;
+}
+
 module.exports = {
   renderToolPage,
+  renderCategoryPage,
+  renderListingCard,
   // exported for testing and reuse by later tasks
   escHtml,
   truncate,

@@ -109,3 +109,51 @@ test("renderToolPage emits related tools section when provided", () => {
   assert.match(html, /class="related-tools"/);
   assert.match(html, /other-tool/);
 });
+
+const { renderCategoryPage } = require("./templates");
+
+test("renderCategoryPage emits H1 with category display name", () => {
+  const html = renderCategoryPage("mcp-servers", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(html, /<h1[^>]*>Best MCP Servers for Claude Code<\/h1>/);
+});
+
+test("renderCategoryPage emits ItemList JSON-LD with one entry per tool", () => {
+  const tools = [fixtureTool, { ...fixtureTool, id: "x", name: "two" }];
+  const html = renderCategoryPage("mcp-servers", tools, {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  const matches = [
+    ...html.matchAll(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+    ),
+  ];
+  const itemList = matches
+    .map((m) => JSON.parse(m[1]))
+    .find((j) => j["@type"] === "ItemList");
+  assert.ok(itemList, "ItemList present");
+  assert.strictEqual(itemList.itemListElement.length, 2);
+  assert.strictEqual(itemList.itemListElement[0].position, 1);
+});
+
+test("renderCategoryPage sets body[data-static-page=category]", () => {
+  const html = renderCategoryPage("mcp-servers", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(html, /<body[^>]*data-static-page="category"/);
+});
+
+test("renderCategoryPage canonical is /categories/{slug}", () => {
+  const html = renderCategoryPage("mcp-servers", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(
+    html,
+    /<link rel="canonical" href="https:\/\/example\.com\/categories\/mcp-servers"\/>/,
+  );
+});
