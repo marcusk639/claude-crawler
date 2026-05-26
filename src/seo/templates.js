@@ -1,8 +1,12 @@
 "use strict";
 
 const { toolUrl, categoryUrl, jobUrl } = require("./slug");
-const { CATEGORY_DISPLAY } = require("./constants");
-const { CATEGORY_INTRO, JOB_INTRO, JOB_DISPLAY } = require("./constants");
+const {
+  CATEGORY_DISPLAY,
+  CATEGORY_INTRO,
+  JOB_DISPLAY,
+  JOB_INTRO,
+} = require("./constants");
 
 const DESC_LEN = 155;
 
