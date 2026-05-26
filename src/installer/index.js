@@ -28,6 +28,24 @@ const GH_HEADERS = {
   }),
 };
 
+// Allowlist of hosts we will fetch file content from. Protects against SSRF
+// if a GitHub API response (or future crawler) ever produces a non-GitHub URL —
+// e.g. a redirect to cloud metadata endpoints (169.254.169.254) on a hosted deployment.
+const ALLOWED_DOWNLOAD_HOSTS = new Set([
+  "raw.githubusercontent.com",
+  "objects.githubusercontent.com",
+]);
+
+function isAllowedDownloadUrl(url) {
+  if (typeof url !== "string") return false;
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" && ALLOWED_DOWNLOAD_HOSTS.has(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
 // Returns a preview of what would happen — no filesystem changes
 async function getInstallPreview(tool) {
   const config = tool.installConfig || {};
@@ -230,11 +248,23 @@ async function executeInstall(tool) {
         continue;
       }
 
+      // SSRF guard: only fetch from known GitHub raw-content hosts
+      if (!isAllowedDownloadUrl(file.src)) {
+        errors.push({
+          file: file.dest,
+          error: `Blocked unsafe download URL (must be raw.githubusercontent.com or objects.githubusercontent.com)`,
+        });
+        continue;
+      }
+
       const { data: content } = await axios.get(file.src, {
         responseType: "text",
         timeout: 10000,
         maxContentLength: MAX_FILE_BYTES,
         maxBodyLength: MAX_FILE_BYTES,
+        // Disable redirects entirely — an HTTP 302 from a compromised endpoint
+        // could redirect to an internal address, bypassing the host allowlist
+        maxRedirects: 0,
       });
 
       // Block writes to core Claude Code config files regardless of category
