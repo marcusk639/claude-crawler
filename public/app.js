@@ -35,7 +35,19 @@ document.addEventListener("DOMContentLoaded", () => {
   bindControls();
   checkStatus();
   loadHealth();
-  loadCatalog();
+  const staticPage = document.body.dataset.staticPage;
+  if (
+    staticPage === "tool" ||
+    staticPage === "category" ||
+    staticPage === "job"
+  ) {
+    // Pre-rendered landing page — skip the catalog fetch and grid render.
+    // Auth, save buttons, and bridge detection still bind below so the
+    // visible heart on this page updates once auth resolves and
+    // loadSavedTools() populates state.savedToolIds.
+  } else {
+    loadCatalog();
+  }
   initAuth();
   detectLocalBridge();
 });
@@ -477,6 +489,10 @@ function applyFiltersAndRender() {
 
 // ── Rendering ──────────────────────────────────
 function renderGrid() {
+  // If the page was static-seeded (homepage has data-seeded="true" on the
+  // grid), the first render replaces those cards with the live, filterable
+  // catalog — no extra handling needed because we always assign innerHTML
+  // below.
   const grid = document.getElementById("catalog-grid");
   const countEl = document.getElementById("result-count");
 
