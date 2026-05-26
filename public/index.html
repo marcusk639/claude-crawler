@@ -180,11 +180,16 @@
 
     <!-- Auth provider chooser modal -->
     <div id="auth-modal-overlay" class="modal-overlay hidden">
-      <div class="modal auth-modal">
+      <div
+        class="modal auth-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+      >
         <button class="modal-close" id="auth-modal-close" aria-label="Close">
           ✕
         </button>
-        <h2 class="modal-title">Sign in to Claude Crawler</h2>
+        <h2 class="modal-title" id="auth-modal-title">Sign in to Claude Crawler</h2>
         <p class="auth-subtitle">Save tools and sync across devices</p>
         <div class="auth-providers">
           <button class="auth-provider-btn" data-provider="github">
@@ -230,11 +235,16 @@
 
     <!-- Copy-paste install fallback modal (shown when no local bridge) -->
     <div id="no-bridge-modal-overlay" class="modal-overlay hidden">
-      <div class="modal no-bridge-modal">
+      <div
+        class="modal no-bridge-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="no-bridge-title"
+      >
         <button class="modal-close" id="no-bridge-close" aria-label="Close">
           ✕
         </button>
-        <h2 class="modal-title">Local installer not detected</h2>
+        <h2 class="modal-title" id="no-bridge-title">Local installer not detected</h2>
         <p>
           To enable one-click installs, run claude-crawler on your local machine:
         </p>

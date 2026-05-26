@@ -51,6 +51,9 @@ async function api(path, opts = {}) {
 }
 
 // ── Auth ───────────────────────────────────────
+// Module-level handle so re-initialization (hot reload, tests) doesn't leak intervals
+let tokenRefreshInterval = null;
+
 function initAuth() {
   firebase.auth().onAuthStateChanged(async (user) => {
     state.currentUser = user;
@@ -77,7 +80,8 @@ function initAuth() {
   });
 
   // Refresh token silently before it expires (Firebase tokens expire after 1hr)
-  setInterval(
+  if (tokenRefreshInterval) clearInterval(tokenRefreshInterval);
+  tokenRefreshInterval = setInterval(
     async () => {
       if (state.currentUser) {
         idToken = await state.currentUser.getIdToken(true);
@@ -97,23 +101,31 @@ async function loadSavedTools() {
   }
 }
 
+// Per-tool in-flight guard prevents double-tap races (both intents firing before either resolves)
+const pendingSaveIds = new Set();
+
 async function toggleSave(toolId) {
   if (!state.currentUser) {
     document.getElementById("auth-modal-overlay").classList.remove("hidden");
     return;
   }
-  const isSaved = state.savedToolIds.has(toolId);
-  if (isSaved) {
-    state.savedToolIds.delete(toolId);
-    applyFiltersAndRender();
-    await api(`/api/user/saved-tools/${encodeURIComponent(toolId)}`, {
-      method: "DELETE",
-    });
-  } else {
-    state.savedToolIds.add(toolId);
-    applyFiltersAndRender();
-    const tool = state.catalog.find((t) => t.id === toolId);
-    if (tool) {
+  if (pendingSaveIds.has(toolId)) return; // already in flight — ignore double-tap
+  pendingSaveIds.add(toolId);
+
+  const wasSaved = state.savedToolIds.has(toolId);
+  // Optimistic mutation
+  if (wasSaved) state.savedToolIds.delete(toolId);
+  else state.savedToolIds.add(toolId);
+  applyFiltersAndRender();
+
+  try {
+    if (wasSaved) {
+      await api(`/api/user/saved-tools/${encodeURIComponent(toolId)}`, {
+        method: "DELETE",
+      });
+    } else {
+      const tool = state.catalog.find((t) => t.id === toolId);
+      if (!tool) throw new Error("Tool not found in catalog");
       await api("/api/user/saved-tools", {
         method: "POST",
         body: JSON.stringify({
@@ -124,6 +136,14 @@ async function toggleSave(toolId) {
         }),
       });
     }
+  } catch (err) {
+    // Roll back the optimistic update so UI matches server truth
+    if (wasSaved) state.savedToolIds.add(toolId);
+    else state.savedToolIds.delete(toolId);
+    applyFiltersAndRender();
+    console.warn(`Save toggle failed for ${toolId}:`, err.message);
+  } finally {
+    pendingSaveIds.delete(toolId);
   }
 }
 
@@ -239,19 +259,6 @@ function bindControls() {
     const tool = state.catalog.find((t) => t.id === btn.dataset.installId);
     if (tool) openInstallModal(tool);
   });
-}
-
-function bindFilterGroup(groupId, filterKey) {
-  document.getElementById(groupId).addEventListener("click", (e) => {
-    const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
-    document
-      .querySelectorAll(`#${groupId} .filter-btn`)
-      .forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.filters[filterKey] = btn.dataset.value;
-    applyFiltersAndRender();
-  });
 
   // Auth
   document
@@ -292,6 +299,19 @@ function bindFilterGroup(groupId, filterKey) {
   document.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-save-id]");
     if (btn) toggleSave(btn.dataset.saveId);
+  });
+}
+
+function bindFilterGroup(groupId, filterKey) {
+  document.getElementById(groupId).addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    document
+      .querySelectorAll(`#${groupId} .filter-btn`)
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.filters[filterKey] = btn.dataset.value;
+    applyFiltersAndRender();
   });
 }
 
@@ -765,11 +785,21 @@ async function executeInstall() {
     const installUrl = state.localBridge
       ? "http://localhost:3737/api/install/execute"
       : "/api/install/execute";
-    const installRes = await fetch(installUrl, {
+    const r = await fetch(installUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tool: state.installTool }),
-    }).then((r) => r.json());
+    });
+    if (!r.ok) {
+      // Non-JSON error bodies (e.g. proxy 502) would crash .json() — surface status instead
+      let msg = `Install failed (HTTP ${r.status})`;
+      try {
+        const body = await r.json();
+        if (body && body.error) msg = body.error;
+      } catch {}
+      throw new Error(msg);
+    }
+    const installRes = await r.json();
     if (!installRes.ok) throw new Error(installRes.error || "Install failed");
     const { result } = installRes;
 
@@ -800,7 +830,15 @@ async function executeInstall() {
       if (tool) tool.installed = true;
     }
   } catch (err) {
-    body.innerHTML = `<div class="install-result error">${escHtml(err.message)}</div>`;
+    // If we thought the bridge was up but the install failed, re-probe it so the UI
+    // can show the no-bridge state on retry instead of looping on the same failure.
+    if (state.localBridge) {
+      await detectLocalBridge();
+    }
+    const bridgeNote = !state.localBridge
+      ? '<p style="margin-top:8px;font-size:12px;color:var(--text-muted)">Local installer is no longer reachable. Start it locally and try again.</p>'
+      : "";
+    body.innerHTML = `<div class="install-result error">${escHtml(err.message)}</div>${bridgeNote}`;
     confirmBtn.textContent = "Retry";
     confirmBtn.disabled = false;
     confirmBtn.onclick = executeInstall;
