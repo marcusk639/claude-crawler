@@ -14,6 +14,20 @@ The core product is fully functional:
 - Install detection, config health panel
 - Web dashboard with filters and install modal
 - Security hardening: CORS localhost-only, loopback bind, path traversal protection, payload limits, refresh cooldown, npm package name validation
+- SEO: server-side pre-rendered HTML for every tool, category, and job; sitemap.xml + robots.txt
+
+---
+
+## Shipped
+
+### SEO-1: Technical foundation (2026-05-26)
+
+Pre-renders the full catalog as static HTML so search engines can index every tool. Generator runs fire-and-forget after each crawl; Express serves `data/static/` ahead of `public/` so `/tools/{category}/{slug}` resolves to a real HTML file (656 tool pages, 2682-line sitemap on first live run).
+
+- Spec: `docs/superpowers/specs/2026-05-26-seo-1-technical-foundation-design.md`
+- Plan: `docs/superpowers/plans/2026-05-26-seo-1-technical-foundation.md`
+
+SEO-2 (content depth: guides, comparison pages, search-intent landing copy) and SEO-3 (analytics + Search Console setup, indexing monitoring) remain open.
 
 ---
 
