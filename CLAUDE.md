@@ -50,6 +50,12 @@ The result is cached in-memory (`src/cache/index.js`, TTL via `CACHE_TTL_MINUTES
 
 `src/scoring/scanner.js` defines pattern sets (`INJECTION_PATTERNS`, `EXFILTRATION_PATTERNS`, `OBFUSCATION_PATTERNS`, `HOOK_PATTERNS`) used by both stages. `INJECTION_PATTERNS` and `EXFILTRATION_PATTERNS` produce `severity: "critical"` warnings, which block install.
 
+### Stage 3: Static pre-rendering (SEO)
+
+`src/seo/generator.js` runs as a fire-and-forget side effect after `scoreCatalog` completes in both `GET /api/catalog` and `POST /api/catalog/refresh`. It writes pre-rendered HTML for every tool, category, and job, plus `sitemap.xml`, `robots.txt`, and the homepage `index.html` (with the top 50 tools seeded into `#catalog-grid`), to `data/static/`. Express mounts `data/static/` ahead of `public/` with `extensions: ["html"]`, so `/tools/{category}/{slug}` resolves to a static file while `/app.js` and `/style.css` fall through to `public/`.
+
+`src/seo/slug.js` is the single source of truth for URL generation (`toolUrl`, `categoryUrl`, `jobUrl`). `src/seo/templates.js` contains pure render functions (no I/O). `src/seo/sitemap.js` produces the XML. `src/seo/generator.js` handles slug collisions per-category: first occurrence wins the bare slug, second appends `-${slugify(source)}`, and third+ append a numeric tiebreaker (`-2`, `-3`, ...) — guaranteed unique.
+
 ### Authentication and user data (optional layer)
 
 `src/firebase.js` initializes the Firebase Admin SDK if `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY` are set. Without them the SDK is uninitialized and `src/routes/users.js` returns 503 for protected endpoints. `src/middleware/auth.js` verifies Firebase ID tokens on `/api/user/*` routes. User saves live in Firestore at `users/{uid}/savedTools/{toolId}`.
@@ -66,11 +72,15 @@ These are non-obvious and easy to break.
 
 **Binding rule.** `server.js` binds to `127.0.0.1` locally and `0.0.0.0` only when `RAILWAY_ENVIRONMENT` is set (or `HOST` is overridden). The install endpoint must never be reachable from the LAN without authentication.
 
-**`validateTool()` in `server.js` is the single gate.** All field validation for install endpoints lives there — `VALID_INSTALL_TYPES`, `VALID_CATEGORIES`, `VALID_NPM_PKG_RE`, `VALID_NPM_CMD_RE`, and length caps. Do not add install-related validation elsewhere; extend `validateTool()`.
+**`validateTool()` in `server.js` is the single gate.** All field validation for install endpoints lives there — `VALID_INSTALL_TYPES`, `VALID_CATEGORIES`, `VALID_NPM_PKG_RE`, `VALID_NPM_CMD_RE`, `VALID_REPO_RE` (enforced on `repoFullName` for `GITHUB_INSTALL_TYPES`), and length caps. Do not add install-related validation elsewhere; extend `validateTool()`.
 
 **`PROTECTED_FILENAMES` is enforced in TWO places.** `previewGithub()` filters them out via `flatMap` returning `[]`; `executeInstall()` rejects them again before `fs.outputFile`. Both paths must stay in sync. The set covers `settings.json`, `settings.local.json`, `.mcp.json`, `CLAUDE.md`, `claude.md`.
 
 **Scanner runs on full content, not a slice.** `buildScanTarget()` deliberately does not truncate — a previous truncation cap was a security bypass. File size is capped upstream (512 KB in `MAX_FILE_BYTES`) so the scanner never sees enormous inputs.
+
+**Downloads are host-allowlisted (SSRF guard).** `installer/index.js` only fetches from `raw.githubusercontent.com` and `objects.githubusercontent.com` (`ALLOWED_DOWNLOAD_HOSTS`), with `maxRedirects: 0` on the axios call so a 302 cannot redirect to an internal address (e.g. `169.254.169.254` cloud metadata on Railway). Any new download path must call `isAllowedDownloadUrl()` or extend the allowlist — otherwise it will be rejected at runtime.
+
+**Firestore is user-scoped + default-deny.** `firestore.rules` allows clients to read/write only under `users/{request.auth.uid}/**`; every other path is denied. The server's Admin SDK bypasses these rules, so server-side validation in `routes/users.js` (`validateSaveBody`, `validateToolIdParam`) is the real authorization gate. Adding a new client-accessed collection requires updating `firestore.rules` AND a server-side validator.
 
 **Crawler dedup must be immutable.** `deduplicateById` in `crawlers/index.js` uses immutable Map updates (`seen.set(id, { ...existing, ...merge })`). Direct mutation of map values has historically caused subtle scoring drift.
 
@@ -79,6 +89,16 @@ These are non-obvious and easy to break.
 **Rate limiters protect external API budgets.** `installLimiter` (10/min), `previewLimiter` (30/min), `searchLimiter` (20/min), and a 60s `REFRESH_COOLDOWN_MS` on `/api/catalog/refresh`. The refresh endpoint also accepts an optional `REFRESH_SECRET` Bearer token (`requireRefreshSecret` uses `timingSafeEqual`).
 
 **Frontend Firebase init uses the compat CDN, not the modular ESM SDK.** `public/index.html` loads `firebase-app-compat.js`, `firebase-auth-compat.js`, and `firebase-firestore-compat.js` from `gstatic.com`, which exposes a global `firebase` object. `public/app.js` then calls `firebase.auth()`, `firebase.auth.GithubAuthProvider`, `firebase.auth.GoogleAuthProvider`, and `firebase.auth.OAuthProvider("apple.com")`. Switching to the modular `import { initializeApp } from "firebase/app"` SDK would break every auth call in `app.js`. There is no bundler — the `firebase` npm package is not used at runtime.
+
+**SEO generation must stay fire-and-forget.** `generateStaticPages(scored).catch(...)` is called without `await` so HTTP responses are not delayed. Errors are logged but never propagate. Do not switch this to `await` — a slow filesystem (Railway cold start, full disk, etc.) would block the API.
+
+**Static mount order matters.** `data/static/` is mounted in `server.js` BEFORE `public/`. Reversing the order would serve the SPA shell for every `/tools/...` URL and silently break SEO. The `extensions: ["html"]` option on the SEO mount lets `/tools/x/y` resolve to `tools/x/y.html`.
+
+**`SITE_URL` is required for production.** Canonical URLs, OG tags, and sitemap `<loc>` entries all use it. Without it, Google ignores canonicals (relative URLs are not allowed there) and ranking suffers. Defaults to `http://localhost:${PORT}` in dev.
+
+**SEO templates run on crawled metadata — escaping is non-negotiable.** Tool names and descriptions originate from arbitrary GitHub/npm/Reddit data and are NOT gated by the content scanner (which only runs install-time). Every interpolation in `src/seo/templates.js` must go through `escHtml`/`escAttr`; JSON-LD blocks must go through `safeJsonLd` (which escapes `<` to `<` so `</script>` cannot break out of the script block).
+
+**The `_slug` trick is load-bearing.** `src/seo/generator.js` resolves slug collisions per-category and then passes `{...tool, name: tool._slug}` to templates. Because `slugify(t._slug) === t._slug`, `toolUrl()` returns the collision-rewritten path, keeping URL generation centralized in `slug.js`. The original human-readable name is preserved via `displayName` for visual rendering. Any new template that uses `toolUrl(tool)` will Just Work; templates that construct URLs differently will silently break collisions.
 
 ## Deployment
 
@@ -98,6 +118,8 @@ These are non-obvious and easy to break.
 - `src/firebase.js` — Admin SDK init (no-op without env vars)
 - `src/routes/users.js`, `src/middleware/auth.js` — auth-protected user data routes
 - `src/search/llm-search.js` — natural-language catalog search
+- `src/seo/` — generator, templates, sitemap, slug helpers (pre-renders catalog into `data/static/`)
+- `data/static/` — gitignored output: per-tool HTML, category/job landings, sitemap.xml, robots.txt, homepage
 - `public/` — vanilla JS dashboard (no build step)
 - `firebase.json`, `.firebaserc`, `firestore.rules`, `firestore.indexes.json` — Firebase CLI config and Firestore security rules (default-deny outside `users/{uid}/**`)
 - `ecosystem.config.js` — PM2 fork-mode supervisor config
