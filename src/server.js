@@ -11,6 +11,8 @@ const { naturalLanguageSearch } = require("./search/llm-search");
 const { getInstallPreview, executeInstall } = require("./installer");
 const { scanLocalConfig } = require("./installer/health");
 const cache = require("./cache");
+require("./firebase"); // initialize Firebase Admin SDK (no-op if env vars not set)
+const userRoutes = require("./routes/users");
 const rateLimit = require("express-rate-limit");
 
 const installLimiter = rateLimit({
@@ -39,9 +41,15 @@ const app = express();
 const PORT = process.env.PORT || 3737;
 
 // Restrict CORS to same-origin localhost only — prevents cross-site install trigger
-app.use(cors({ origin: `http://localhost:${PORT}` }));
+// Allow localhost for local dev, plus the hosted frontend origin when deployed
+const ALLOWED_ORIGINS = [
+  `http://localhost:${PORT}`,
+  process.env.ALLOWED_ORIGIN,
+].filter(Boolean);
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json({ limit: "10kb" }));
 app.use(express.static(path.join(__dirname, "..", "public")));
+app.use("/api/user", userRoutes);
 
 // In-flight deduplication: concurrent cache misses share one crawl instead of racing
 let catalogInFlight = null;
@@ -274,7 +282,12 @@ app.get("/api/status", (req, res) => {
 });
 
 // Bind to loopback only — prevents LAN access to the install endpoint
-app.listen(PORT, "127.0.0.1", () => {
+// On Railway (RAILWAY_ENVIRONMENT is set), bind to 0.0.0.0 for external traffic.
+// Locally, default to 127.0.0.1 loopback. Override with HOST env var if needed.
+const HOST = process.env.RAILWAY_ENVIRONMENT
+  ? "0.0.0.0"
+  : process.env.HOST || "127.0.0.1";
+app.listen(PORT, HOST, () => {
   console.log(`\nClaude Crawler running at http://localhost:${PORT}`);
   console.log(
     `GitHub API: ${process.env.GITHUB_TOKEN ? "authenticated (5000 req/hr)" : "unauthenticated (60 req/hr)"}`,
