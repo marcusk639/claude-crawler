@@ -5,3 +5,8 @@ data/cache/
 *.bak
 .DS_Store
 .remember/
+
+# Firebase Admin SDK service account keys — NEVER commit
+*-firebase-adminsdk-*.json
+serviceAccountKey*.json
+firebase-service-account*.json
