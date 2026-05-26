@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can only read/write documents under their own UID.
+    // This applies recursively to all sub-collections (savedTools, preferences, etc).
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Default-deny — any path not explicitly allowed above is forbidden
+    // for direct client access. The server still has Admin SDK access.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
