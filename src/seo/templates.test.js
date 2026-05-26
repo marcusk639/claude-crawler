@@ -157,3 +157,32 @@ test("renderCategoryPage canonical is /categories/{slug}", () => {
     /<link rel="canonical" href="https:\/\/example\.com\/categories\/mcp-servers"\/>/,
   );
 });
+
+const { renderJobPage } = require("./templates");
+
+test("renderJobPage emits H1 with job display name", () => {
+  const html = renderJobPage("code-quality", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(html, /<h1[^>]*>Claude Code Tools for Code Quality<\/h1>/);
+});
+
+test("renderJobPage canonical is /jobs/{slug}", () => {
+  const html = renderJobPage("code-quality", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(
+    html,
+    /<link rel="canonical" href="https:\/\/example\.com\/jobs\/code-quality"\/>/,
+  );
+});
+
+test("renderJobPage sets body[data-static-page=job]", () => {
+  const html = renderJobPage("code-quality", [fixtureTool], {
+    siteUrl,
+    generatedAt: "2026-05-26",
+  });
+  assert.match(html, /<body[^>]*data-static-page="job"/);
+});

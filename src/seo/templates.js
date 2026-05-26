@@ -1,6 +1,6 @@
 "use strict";
 
-const { toolUrl, categoryUrl } = require("./slug");
+const { toolUrl, categoryUrl, jobUrl } = require("./slug");
 const { CATEGORY_DISPLAY } = require("./constants");
 const { CATEGORY_INTRO, JOB_INTRO, JOB_DISPLAY } = require("./constants");
 
@@ -313,9 +313,66 @@ function renderCategoryPage(category, tools, { siteUrl, generatedAt }) {
 </html>`;
 }
 
+function renderJobPage(job, tools, { siteUrl, generatedAt }) {
+  const jobDisplay = JOB_DISPLAY[job] || job;
+  const canonical = `${siteUrl}${jobUrl(job)}`;
+  const title = `Claude Code Tools for ${jobDisplay} (2026)`;
+  const intro = JOB_INTRO[job] || "";
+  const description = `Top ${tools.length} Claude Code tools for ${jobDisplay.toLowerCase()}, ranked by quality. Updated ${generatedAt}.`;
+
+  const ldItemList = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: title,
+    itemListElement: tools.map((t, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${siteUrl}${toolUrl(t)}`,
+      name: t.name,
+    })),
+  };
+  const ldBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: jobDisplay,
+        item: canonical,
+      },
+    ],
+  };
+
+  return `<!doctype html>
+<html lang="en">
+  <head>${renderHead({
+    title,
+    description,
+    canonical,
+    ogType: "website",
+    ogImage: `${siteUrl}/og-default.png`,
+    jsonLd: [ldItemList, ldBreadcrumb],
+  })}</head>
+  <body data-static-page="job">
+    ${renderSiteHeader()}
+    <main class="landing">
+      ${renderBreadcrumbNav([{ label: "Home", href: "/" }, { label: jobDisplay }])}
+      <h1>Claude Code Tools for ${escHtml(jobDisplay)}</h1>
+      <p class="landing-intro">${escHtml(intro)}</p>
+      <div class="listing-grid">${tools.map(renderListingCard).join("")}</div>
+      <p class="landing-footer"><a href="/">Browse all tools →</a></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>`;
+}
+
 module.exports = {
   renderToolPage,
   renderCategoryPage,
+  renderJobPage,
   renderListingCard,
   // exported for testing and reuse by later tasks
   escHtml,
