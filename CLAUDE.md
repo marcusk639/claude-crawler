@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+- **Spike findings for claude-crawler** (corpus expansion patterns, proven crawlers, constraints, gotchas) → `Skill("spike-findings-claude-crawler")`
+
 ## What this is
 
 A Node.js/Express service that crawls GitHub, npm, Reddit, Anthropic's org, and (optionally) Google CSE to build a scored catalog of Claude Code ecosystem tools (agents, skills, MCP servers, CLAUDE.md templates, hooks). Serves a REST API and a vanilla-JS dashboard at `http://localhost:3737`. Can preview and install tools directly into `~/.claude/` after a security scan.
