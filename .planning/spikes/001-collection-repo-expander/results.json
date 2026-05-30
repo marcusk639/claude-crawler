@@ -1,0 +1,162 @@
+{
+  "results": [
+    {
+      "label": "VoltAgent Subagents",
+      "repo": "VoltAgent/awesome-claude-code-subagents",
+      "total": 154,
+      "sample": [
+        {
+          "id": "VoltAgent:awesome-claude-code-subagents:api-designer",
+          "name": "api-designer",
+          "displayName": "api-designer",
+          "description": "Use this agent when designing new APIs, creating API specifications, or refactoring existing API architecture for scalability and developer experience. Invoke when you need REST/GraphQL endpoint design, OpenAPI documentation, authentication patterns, or API versioning strategies.",
+          "source": "VoltAgent/awesome-claude-code-subagents",
+          "path": "categories/01-core-development/api-designer.md",
+          "hasDescription": true
+        },
+        {
+          "id": "VoltAgent:awesome-claude-code-subagents:backend-developer",
+          "name": "backend-developer",
+          "displayName": "backend-developer",
+          "description": "Use this agent when building server-side APIs, microservices, and backend systems that require robust architecture, scalability planning, and production-ready implementation.",
+          "source": "VoltAgent/awesome-claude-code-subagents",
+          "path": "categories/01-core-development/backend-developer.md",
+          "hasDescription": true
+        },
+        {
+          "id": "VoltAgent:awesome-claude-code-subagents:design-bridge",
+          "name": "design-bridge",
+          "displayName": "design-bridge",
+          "description": "Use this agent when you need to translate a DESIGN.md from the VoltAgent/awesome-design-md repository into polished Claude Code instructions for building user interfaces that faithfully match the chosen brand. Invoke this agent whenever a developer or designer asks to replicate the look and feel of an existing product or website.",
+          "source": "VoltAgent/awesome-claude-code-subagents",
+          "path": "categories/01-core-development/design-bridge.md",
+          "hasDescription": true
+        },
+        {
+          "id": "VoltAgent:awesome-claude-code-subagents:electron-pro",
+          "name": "electron-pro",
+          "displayName": "electron-pro",
+          "description": "Use this agent when building Electron desktop applications that require native OS integration, cross-platform distribution, security hardening, and performance optimization. Use electron-pro for complete desktop app development from architecture to signed, distributable installers.",
+          "source": "VoltAgent/awesome-claude-code-subagents",
+          "path": "categories/01-core-development/electron-pro.md",
+          "hasDescription": true
+        },
+        {
+          "id": "VoltAgent:awesome-claude-code-subagents:frontend-developer",
+          "name": "frontend-developer",
+          "displayName": "frontend-developer",
+          "description": "Use when building complete frontend applications across React, Vue, and Angular frameworks requiring multi-framework expertise and full-stack integration.",
+          "source": "VoltAgent/awesome-claude-code-subagents",
+          "path": "categories/01-core-development/frontend-developer.md",
+          "hasDescription": true
+        }
+      ]
+    },
+    {
+      "label": "Antigravity Skills",
+      "repo": "sickn33/antigravity-awesome-skills",
+      "total": 4604,
+      "sample": [
+        {
+          "id": "sickn33:antigravity-awesome-skills:00-andruia-consultant",
+          "name": "00-andruia-consultant",
+          "displayName": "00-andruia-consultant",
+          "description": "Arquitecto de Soluciones Principal y Consultor Tecnológico de Andru.ia. Diagnostica y traza la hoja de ruta óptima para proyectos de IA en español.",
+          "source": "sickn33/antigravity-awesome-skills",
+          "path": "plugins/antigravity-awesome-skills-claude/skills/00-andruia-consultant/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "sickn33:antigravity-awesome-skills:007",
+          "name": "007",
+          "displayName": "007",
+          "description": "Security audit, hardening, threat modeling (STRIDE/PASTA), Red/Blue Team, OWASP checks, code review, incident response, and infrastructure security for any project.",
+          "source": "sickn33/antigravity-awesome-skills",
+          "path": "plugins/antigravity-awesome-skills-claude/skills/007/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "sickn33:antigravity-awesome-skills:10-andruia-skill-smith",
+          "name": "10-andruia-skill-smith",
+          "displayName": "10-andruia-skill-smith",
+          "description": "Ingeniero de Sistemas de Andru.ia. Diseña, redacta y despliega nuevas habilidades (skills) dentro del repositorio siguiendo el Estándar de Diamante.",
+          "source": "sickn33/antigravity-awesome-skills",
+          "path": "plugins/antigravity-awesome-skills-claude/skills/10-andruia-skill-smith/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "sickn33:antigravity-awesome-skills:20-andruia-niche-intelligence",
+          "name": "20-andruia-niche-intelligence",
+          "displayName": "20-andruia-niche-intelligence",
+          "description": "Estratega de Inteligencia de Dominio de Andru.ia. Analiza el nicho específico de un proyecto para inyectar conocimientos, regulaciones y estándares únicos del sector. Actívalo tras definir el nicho.",
+          "source": "sickn33/antigravity-awesome-skills",
+          "path": "plugins/antigravity-awesome-skills-claude/skills/20-andruia-niche-intelligence/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "sickn33:antigravity-awesome-skills:3d-web-experience",
+          "name": "3d-web-experience",
+          "displayName": "3d-web-experience",
+          "description": "Expert in building 3D experiences for the web - Three.js, React",
+          "source": "sickn33/antigravity-awesome-skills",
+          "path": "plugins/antigravity-awesome-skills-claude/skills/3d-web-experience/SKILL.md",
+          "hasDescription": true
+        }
+      ]
+    },
+    {
+      "label": "ECC Skills",
+      "repo": "affaan-m/ECC",
+      "total": 249,
+      "sample": [
+        {
+          "id": "affaan-m:ECC:SKILL",
+          "name": "SKILL",
+          "displayName": "accessibility",
+          "description": "Design, implement, and audit inclusive digital products using WCAG 2.2 Level AA",
+          "source": "affaan-m/ECC",
+          "path": "skills/accessibility/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "affaan-m:ECC:SKILL",
+          "name": "SKILL",
+          "displayName": "agent-architecture-audit",
+          "description": "Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, tool discipline failures, hidden repair loops, and rendering corruption. Produces severity-ranked findings with code-first fixes. Essential for developers building agent applications, autonomous loops, or any LLM-powered feature.",
+          "source": "affaan-m/ECC",
+          "path": "skills/agent-architecture-audit/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "affaan-m:ECC:SKILL",
+          "name": "SKILL",
+          "displayName": "agent-eval",
+          "description": "Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consistency metrics",
+          "source": "affaan-m/ECC",
+          "path": "skills/agent-eval/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "affaan-m:ECC:SKILL",
+          "name": "SKILL",
+          "displayName": "agent-harness-construction",
+          "description": "Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates.",
+          "source": "affaan-m/ECC",
+          "path": "skills/agent-harness-construction/SKILL.md",
+          "hasDescription": true
+        },
+        {
+          "id": "affaan-m:ECC:SKILL",
+          "name": "SKILL",
+          "displayName": "agent-introspection-debugging",
+          "description": "Structured self-debugging workflow for AI agent failures using capture, diagnosis, contained recovery, and introspection reports.",
+          "source": "affaan-m/ECC",
+          "path": "skills/agent-introspection-debugging/SKILL.md",
+          "hasDescription": true
+        }
+      ]
+    }
+  ],
+  "totalTools": 5007,
+  "timestamp": "2026-05-30T06:00:55.362Z"
+}

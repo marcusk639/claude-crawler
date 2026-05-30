@@ -1,0 +1,283 @@
+{
+  "results": [
+    {
+      "label": "003a: SKILL.md with description field",
+      "query": "filename:SKILL.md description language:Markdown",
+      "totalCount": 319936,
+      "reposFound": 30,
+      "newRepos": 30,
+      "rateLimited": false,
+      "sampleNew": [
+        {
+          "fullName": "40RTY-ai/shopify-admin-skills",
+          "description": "Community-maintained AI agent skills for operating Shopify stores — workflows, optimization, reports and more",
+          "url": "https://github.com/40RTY-ai/shopify-admin-skills",
+          "isNew": true,
+          "filePath": "SKILL.md"
+        },
+        {
+          "fullName": "LayGao/weather",
+          "description": "",
+          "url": "https://github.com/LayGao/weather",
+          "isNew": true,
+          "filePath": "skill.md"
+        },
+        {
+          "fullName": "simplexlabs/montage",
+          "description": "Agentic motion videos built with Remotion",
+          "url": "https://github.com/simplexlabs/montage",
+          "isNew": true,
+          "filePath": "SKILL.md"
+        },
+        {
+          "fullName": "nicolasagardoy/flux-klein-image-gen",
+          "description": "Run FLUX.2 Klein 4B locally on Apple Silicon + Claude Code skill for natural language image generation",
+          "url": "https://github.com/nicolasagardoy/flux-klein-image-gen",
+          "isNew": true,
+          "filePath": "skill.md"
+        },
+        {
+          "fullName": "umami-software/react-zen",
+          "description": "Zen is a props-driven React component library built for speed. Build polished interfaces without writing HTML, CSS, or thinking about Tailwind classes.",
+          "url": "https://github.com/umami-software/react-zen",
+          "isNew": true,
+          "filePath": "SKILL.md"
+        }
+      ]
+    },
+    {
+      "label": "003a: SKILL.md in .claude/skills path",
+      "query": "path:.claude/skills filename:SKILL.md",
+      "totalCount": 81216,
+      "reposFound": 29,
+      "newRepos": 29,
+      "rateLimited": false,
+      "sampleNew": [
+        {
+          "fullName": "atopile/atopile",
+          "description": "Design circuit boards with code! ✨ Get software-like design reuse 🚀, validation, version control and collaboration in hardware; starting with electronics ⚡️",
+          "url": "https://github.com/atopile/atopile",
+          "isNew": true,
+          "filePath": ".claude/skills/lsp/SKILL.md"
+        },
+        {
+          "fullName": "doccker/cc-use-exp",
+          "description": "让 Claude Code、Gemini CLI、Codex、Cursor 开箱即用的分层配置模板，总结十多年的日常开发经验，持续完善中……",
+          "url": "https://github.com/doccker/cc-use-exp",
+          "isNew": true,
+          "filePath": ".claude/skills/go-dev/SKILL.md"
+        },
+        {
+          "fullName": "shawnpetros/salazar",
+          "description": "Autonomous coding harness. Claude Agent SDK, planner + generator + evaluator loop, hard validator gates (tsc / eslint / build / test).",
+          "url": "https://github.com/shawnpetros/salazar",
+          "isNew": true,
+          "filePath": ".claude/skills/salazar/skill.md"
+        },
+        {
+          "fullName": "Kaushik2003/stacy-v2",
+          "description": "",
+          "url": "https://github.com/Kaushik2003/stacy-v2",
+          "isNew": true,
+          "filePath": ".claude/skills/Skill.md"
+        },
+        {
+          "fullName": "oysteinkrog/dotfiles",
+          "description": "",
+          "url": "https://github.com/oysteinkrog/dotfiles",
+          "isNew": true,
+          "filePath": ".claude/skills/rch/SKILL.md.disabled"
+        }
+      ]
+    },
+    {
+      "label": "003b: .claude/agents .md files with tools field",
+      "query": "path:.claude/agents extension:md tools",
+      "totalCount": 15632,
+      "reposFound": 29,
+      "newRepos": 29,
+      "rateLimited": false,
+      "sampleNew": [
+        {
+          "fullName": "AgentWorkforce/relay",
+          "description": "Real-time agent to agent communication",
+          "url": "https://github.com/AgentWorkforce/relay",
+          "isNew": true,
+          "filePath": ".claude/agents/cli.md"
+        },
+        {
+          "fullName": "sheshbabu/zen",
+          "description": "Selfhosted notes app. Single golang binary, notes stored as markdown within SQLite, full-text search, very low resource usage",
+          "url": "https://github.com/sheshbabu/zen",
+          "isNew": true,
+          "filePath": ".claude/agents/architect.md"
+        },
+        {
+          "fullName": "vchelaru/Gum",
+          "description": "Flexible layout tool for creating UI on any platform",
+          "url": "https://github.com/vchelaru/Gum",
+          "isNew": true,
+          "filePath": ".claude/agents/qa.md"
+        },
+        {
+          "fullName": "Ramilito/kubectl.nvim",
+          "description": "⎈ Streamline your Kubernetes management within Neovim—control and monitor your cluster seamlessly, all without leaving your coding environment.",
+          "url": "https://github.com/Ramilito/kubectl.nvim",
+          "isNew": true,
+          "filePath": ".claude/agents/logs.md"
+        },
+        {
+          "fullName": "pabpereza/pabpereza",
+          "description": "Website, courses, documentation, blog and youtube video tracker.",
+          "url": "https://github.com/pabpereza/pabpereza",
+          "isNew": true,
+          "filePath": ".claude/agents/sam.md"
+        }
+      ]
+    }
+  ],
+  "totalNewRepos": 88,
+  "sampleNewRepos": [
+    {
+      "fullName": "40RTY-ai/shopify-admin-skills",
+      "description": "Community-maintained AI agent skills for operating Shopify stores — workflows, optimization, reports and more",
+      "url": "https://github.com/40RTY-ai/shopify-admin-skills",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "LayGao/weather",
+      "description": "",
+      "url": "https://github.com/LayGao/weather",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "simplexlabs/montage",
+      "description": "Agentic motion videos built with Remotion",
+      "url": "https://github.com/simplexlabs/montage",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "nicolasagardoy/flux-klein-image-gen",
+      "description": "Run FLUX.2 Klein 4B locally on Apple Silicon + Claude Code skill for natural language image generation",
+      "url": "https://github.com/nicolasagardoy/flux-klein-image-gen",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "umami-software/react-zen",
+      "description": "Zen is a props-driven React component library built for speed. Build polished interfaces without writing HTML, CSS, or thinking about Tailwind classes.",
+      "url": "https://github.com/umami-software/react-zen",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "SasekLab/Zariah-construction",
+      "description": "",
+      "url": "https://github.com/SasekLab/Zariah-construction",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "jamierpond/yapi",
+      "description": "",
+      "url": "https://github.com/jamierpond/yapi",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "vishwas1234567/skill.md-contentstack",
+      "description": "",
+      "url": "https://github.com/vishwas1234567/skill.md-contentstack",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "Kuneosu/make-slide",
+      "description": "Universal AI skill for generating standalone HTML slide decks",
+      "url": "https://github.com/Kuneosu/make-slide",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "CamiloAndresGTRUniandes/lucy-ai",
+      "description": "lucy bot configuration and skills for openclaw",
+      "url": "https://github.com/CamiloAndresGTRUniandes/lucy-ai",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "zhengcb81/revenue-forecast",
+      "description": "Skill for public company revenue forecast",
+      "url": "https://github.com/zhengcb81/revenue-forecast",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "vigorX777/content-collector-skill",
+      "description": "OpenClaw skill: 自动收集社交媒体内容并整理成结构化笔记存入飞书文档",
+      "url": "https://github.com/vigorX777/content-collector-skill",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "Growth-Circle/gc-provider",
+      "description": "OpenClaw provider plugin for GrowthCircle.id models",
+      "url": "https://github.com/Growth-Circle/gc-provider",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "ponaalagar/filit",
+      "description": "A MCP that automatically fills spreadsheet with the give context ",
+      "url": "https://github.com/ponaalagar/filit",
+      "isNew": true,
+      "filePath": "skill.md"
+    },
+    {
+      "fullName": "lightninglabs/lnget",
+      "description": "wget for the pay-per-request web (powered by Lightning Lab's L402 protocol)",
+      "url": "https://github.com/lightninglabs/lnget",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "mwunsch/mansplain",
+      "description": "Generate mdoc(7) man pages from source material",
+      "url": "https://github.com/mwunsch/mansplain",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "viames/pair",
+      "description": "a lightweight PHP framework as the air",
+      "url": "https://github.com/viames/pair",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "diegosouzapw/awesome-omni-skill",
+      "description": "Repositorio Publico, agregador de skills",
+      "url": "https://github.com/diegosouzapw/awesome-omni-skill",
+      "isNew": true,
+      "filePath": "skills/data-ai/reppo/SKILL.md"
+    },
+    {
+      "fullName": "richlander/markout",
+      "description": "Objects to Structured Logs Serializer (markdown, oneline, TSV, ANSI, tree, ...)",
+      "url": "https://github.com/richlander/markout",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    },
+    {
+      "fullName": "llh315434220/claude-skill-architect",
+      "description": "Build high-quality Claude Skills following Anthropic official best practices.",
+      "url": "https://github.com/llh315434220/claude-skill-architect",
+      "isNew": true,
+      "filePath": "SKILL.md"
+    }
+  ],
+  "timestamp": "2026-05-30T06:04:45.772Z"
+}

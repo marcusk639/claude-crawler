@@ -1,0 +1,338 @@
+{
+  "results": [
+    {
+      "label": "Rohitg00 Claude Code Toolkit",
+      "repo": "rohitg00/awesome-claude-code-toolkit",
+      "total": 333,
+      "sample": [
+        {
+          "name": "pro-workflow",
+          "url": "https://github.com/rohitg00/pro-workflow",
+          "repoPath": "rohitg00/pro-workflow",
+          "description": "Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, 8 hook types, 5 agents, and the 80/20 AI coding ratio. Install: `/plugin marketplace add rohitg00/pro-workflow`",
+          "stars": 2248,
+          "githubDescription": "Claude Code learns from your corrections: self-correcting memory that compounds over 50+ sessions. Context engineering, parallel worktrees, agent teams, and 17 battle-tested skills.",
+          "hasDescription": true
+        },
+        {
+          "name": "gstack",
+          "url": "https://github.com/garrytan/gstack",
+          "repoPath": "garrytan/gstack",
+          "description": "Garry Tan's exact Claude Code setup: 6 opinionated tools that serve as CEO, Eng Manager, Release Manager, and QA Engineer.",
+          "stars": 104571,
+          "githubDescription": "Use Garry Tan's exact Claude Code setup: 23 opinionated tools that serve as CEO, Designer, Eng Manager, Release Manager, Doc Engineer, and QA",
+          "hasDescription": true
+        },
+        {
+          "name": "agento-patronum",
+          "url": "https://github.com/emaarco/agento-patronum",
+          "repoPath": "emaarco/agento-patronum",
+          "description": "",
+          "stars": "?",
+          "githubDescription": "",
+          "hasDescription": false
+        },
+        {
+          "name": "skills-janitor",
+          "url": "https://github.com/khendzel/skills-janitor",
+          "repoPath": "khendzel/skills-janitor",
+          "description": "",
+          "stars": 100,
+          "githubDescription": "Audit, track usage, and manage your Claude Code and OpenAI Codex skills. 7 slash commands, zero dependencies.",
+          "hasDescription": true
+        },
+        {
+          "name": "great_cto",
+          "url": "https://github.com/avelikiy/great_cto",
+          "repoPath": "avelikiy/great_cto",
+          "description": "",
+          "stars": 33,
+          "githubDescription": "The engineering process for solo founders and teams up to 50 engineers - without the overhead.",
+          "hasDescription": true
+        }
+      ],
+      "allLinks": [
+        {
+          "name": "pro-workflow",
+          "url": "https://github.com/rohitg00/pro-workflow",
+          "repoPath": "rohitg00/pro-workflow",
+          "description": "Battle-tested Claude Code workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, 8 hook types, 5 agents, and the 80/20 AI coding ratio. Install: `/plugin marketplace add rohitg00/pro-workflow`"
+        },
+        {
+          "name": "gstack",
+          "url": "https://github.com/garrytan/gstack",
+          "repoPath": "garrytan/gstack",
+          "description": "Garry Tan's exact Claude Code setup: 6 opinionated tools that serve as CEO, Eng Manager, Release Manager, and QA Engineer."
+        },
+        {
+          "name": "agento-patronum",
+          "url": "https://github.com/emaarco/agento-patronum",
+          "repoPath": "emaarco/agento-patronum",
+          "description": ""
+        },
+        {
+          "name": "skills-janitor",
+          "url": "https://github.com/khendzel/skills-janitor",
+          "repoPath": "khendzel/skills-janitor",
+          "description": ""
+        },
+        {
+          "name": "great_cto",
+          "url": "https://github.com/avelikiy/great_cto",
+          "repoPath": "avelikiy/great_cto",
+          "description": ""
+        },
+        {
+          "name": "aws-cost-saver",
+          "url": "https://github.com/prajapatimehul/aws-cost-saver",
+          "repoPath": "prajapatimehul/aws-cost-saver",
+          "description": ""
+        },
+        {
+          "name": "claude-agentic-coding-playbook",
+          "url": "https://github.com/john-wilmes/claude-agentic-coding-playbook",
+          "repoPath": "john-wilmes/claude-agentic-coding-playbook",
+          "description": ""
+        },
+        {
+          "name": "claude-code-mcp",
+          "url": "https://github.com/steipete/claude-code-mcp",
+          "repoPath": "steipete/claude-code-mcp",
+          "description": ""
+        },
+        {
+          "name": "claude-code-system-prompts",
+          "url": "https://github.com/Piebald-AI/claude-code-system-prompts",
+          "repoPath": "Piebald-AI/claude-code-system-prompts",
+          "description": ""
+        },
+        {
+          "name": "claude-context",
+          "url": "https://github.com/zilliztech/claude-context",
+          "repoPath": "zilliztech/claude-context",
+          "description": ""
+        },
+        {
+          "name": "claude-cost-optimizer",
+          "url": "https://github.com/Sagargupta16/claude-cost-optimizer",
+          "repoPath": "Sagargupta16/claude-cost-optimizer",
+          "description": ""
+        },
+        {
+          "name": "fractal",
+          "url": "https://github.com/rmolines/fractal",
+          "repoPath": "rmolines/fractal",
+          "description": ""
+        },
+        {
+          "name": "AgentLint",
+          "url": "https://github.com/0xmariowu/AgentLint",
+          "repoPath": "0xmariowu/AgentLint",
+          "description": ""
+        },
+        {
+          "name": "Bouncer",
+          "url": "https://github.com/buildingopen/bouncer",
+          "repoPath": "buildingopen/bouncer",
+          "description": ""
+        },
+        {
+          "name": "brooks-lint",
+          "url": "https://github.com/hyhmrright/brooks-lint",
+          "repoPath": "hyhmrright/brooks-lint",
+          "description": ""
+        },
+        {
+          "name": "ccmanager",
+          "url": "https://github.com/kbwo/ccmanager",
+          "repoPath": "kbwo/ccmanager",
+          "description": ""
+        },
+        {
+          "name": "ccpm",
+          "url": "https://github.com/automazeio/ccpm",
+          "repoPath": "automazeio/ccpm",
+          "description": ""
+        },
+        {
+          "name": "ccusage",
+          "url": "https://github.com/ryoppippi/ccusage",
+          "repoPath": "ryoppippi/ccusage",
+          "description": ""
+        },
+        {
+          "name": "cc-cost",
+          "url": "https://github.com/lob-labs/cc-cost",
+          "repoPath": "lob-labs/cc-cost",
+          "description": ""
+        },
+        {
+          "name": "getburnd",
+          "url": "https://github.com/garvitsurana271/burnd",
+          "repoPath": "garvitsurana271/burnd",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "label": "Travis VN Awesome Claude Skills",
+      "repo": "travisvn/awesome-claude-skills",
+      "total": 16,
+      "sample": [
+        {
+          "name": "obra/superpowers",
+          "url": "https://github.com/obra/superpowers",
+          "repoPath": "obra/superpowers",
+          "description": "Core skills library for Claude Code with 20+ battle-tested skills including TDD, debugging, and collaboration patterns",
+          "stars": 212435,
+          "githubDescription": "An agentic skills framework & software development methodology that works.",
+          "hasDescription": true
+        },
+        {
+          "name": "superpowers-skills",
+          "url": "https://github.com/obra/superpowers-skills",
+          "repoPath": "obra/superpowers-skills",
+          "description": "Community-editable skills repository",
+          "stars": 670,
+          "githubDescription": "Community-editable skills for Claude Code's superpowers plugin",
+          "hasDescription": true
+        },
+        {
+          "name": "obra/superpowers-lab",
+          "url": "https://github.com/obra/superpowers-lab",
+          "repoPath": "obra/superpowers-lab",
+          "description": "Experimental skills for `Claude Code Superpowers` (see above)",
+          "stars": 352,
+          "githubDescription": "Experimental skills for Claude Code Superpowers - new techniques and tools",
+          "hasDescription": true
+        },
+        {
+          "name": "ios-simulator-skill",
+          "url": "https://github.com/conorluddy/ios-simulator-skill",
+          "repoPath": "conorluddy/ios-simulator-skill",
+          "description": "",
+          "stars": 1044,
+          "githubDescription": "An IOS Simulator Skill for ClaudeCode. Use it to optimise Claude's ability to build, run and interact with your apps. I mainly use it as an xcodebuild wrapper to save context.",
+          "hasDescription": true
+        },
+        {
+          "name": "ffuf-web-fuzzing",
+          "url": "https://github.com/jthack/ffuf_claude_skill",
+          "repoPath": "jthack/ffuf_claude_skill",
+          "description": "",
+          "stars": 181,
+          "githubDescription": "This is a \"skill\" for claude to use FFUF.",
+          "hasDescription": true
+        }
+      ],
+      "allLinks": [
+        {
+          "name": "obra/superpowers",
+          "url": "https://github.com/obra/superpowers",
+          "repoPath": "obra/superpowers",
+          "description": "Core skills library for Claude Code with 20+ battle-tested skills including TDD, debugging, and collaboration patterns"
+        },
+        {
+          "name": "superpowers-skills",
+          "url": "https://github.com/obra/superpowers-skills",
+          "repoPath": "obra/superpowers-skills",
+          "description": "Community-editable skills repository"
+        },
+        {
+          "name": "obra/superpowers-lab",
+          "url": "https://github.com/obra/superpowers-lab",
+          "repoPath": "obra/superpowers-lab",
+          "description": "Experimental skills for `Claude Code Superpowers` (see above)"
+        },
+        {
+          "name": "ios-simulator-skill",
+          "url": "https://github.com/conorluddy/ios-simulator-skill",
+          "repoPath": "conorluddy/ios-simulator-skill",
+          "description": ""
+        },
+        {
+          "name": "ffuf-web-fuzzing",
+          "url": "https://github.com/jthack/ffuf_claude_skill",
+          "repoPath": "jthack/ffuf_claude_skill",
+          "description": ""
+        },
+        {
+          "name": "playwright-skill",
+          "url": "https://github.com/lackeyjb/playwright-skill",
+          "repoPath": "lackeyjb/playwright-skill",
+          "description": ""
+        },
+        {
+          "name": "claude-d3js-skill",
+          "url": "https://github.com/chrisvoncsefalvay/claude-d3js-skill",
+          "repoPath": "chrisvoncsefalvay/claude-d3js-skill",
+          "description": ""
+        },
+        {
+          "name": "claude-scientific-skills",
+          "url": "https://github.com/K-Dense-AI/claude-scientific-skills",
+          "repoPath": "K-Dense-AI/claude-scientific-skills",
+          "description": ""
+        },
+        {
+          "name": "web-asset-generator",
+          "url": "https://github.com/alonw0/web-asset-generator",
+          "repoPath": "alonw0/web-asset-generator",
+          "description": ""
+        },
+        {
+          "name": "loki-mode",
+          "url": "https://github.com/asklokesh/claudeskill-loki-mode",
+          "repoPath": "asklokesh/claudeskill-loki-mode",
+          "description": ""
+        },
+        {
+          "name": "Trail of Bits Security Skills",
+          "url": "https://github.com/trailofbits/skills",
+          "repoPath": "trailofbits/skills",
+          "description": ""
+        },
+        {
+          "name": "frontend-slides",
+          "url": "https://github.com/zarazhangrui/frontend-slides",
+          "repoPath": "zarazhangrui/frontend-slides",
+          "description": ""
+        },
+        {
+          "name": "Expo Skills",
+          "url": "https://github.com/expo/skills",
+          "repoPath": "expo/skills",
+          "description": ""
+        },
+        {
+          "name": "get-shit-done",
+          "url": "https://github.com/gsd-build/get-shit-done",
+          "repoPath": "gsd-build/get-shit-done",
+          "description": ""
+        },
+        {
+          "name": "yusufkaraaslan/Skill_Seekers",
+          "url": "https://github.com/yusufkaraaslan/Skill_Seekers",
+          "repoPath": "yusufkaraaslan/Skill_Seekers",
+          "description": "Convert documentation websites into Claude Skills"
+        },
+        {
+          "name": "anthropics/skills",
+          "url": "https://github.com/anthropics/skills",
+          "repoPath": "anthropics/skills",
+          "description": "Official public repository for Skills"
+        }
+      ]
+    },
+    {
+      "label": "Hesreallyhim Awesome Claude Code",
+      "repo": "hesreallyhim/awesome-claude-code",
+      "total": 0,
+      "sample": [],
+      "allLinks": []
+    }
+  ],
+  "totalUnique": 349,
+  "uniqueRepos": 345,
+  "timestamp": "2026-05-30T06:03:26.863Z"
+}
