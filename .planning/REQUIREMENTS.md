@@ -85,39 +85,37 @@ Deferred to future milestones. Tracked but not in current roadmap.
 
 ## Traceability
 
-Populated by roadmapper during ROADMAP.md creation.
-
-| Requirement | Phase | Status  |
-| ----------- | ----- | ------- |
-| QUAL-01     | —     | Pending |
-| QUAL-02     | —     | Pending |
-| QUAL-03     | —     | Pending |
-| QUAL-04     | —     | Pending |
-| SCORE-01    | —     | Pending |
-| SCORE-02    | —     | Pending |
-| SCORE-03    | —     | Pending |
-| SCORE-04    | —     | Pending |
-| SCORE-05    | —     | Pending |
-| SCORE-06    | —     | Pending |
-| SCOREUI-01  | —     | Pending |
-| SCOREUI-02  | —     | Pending |
-| SRCH-01     | —     | Pending |
-| SRCH-02     | —     | Pending |
-| SRCH-03     | —     | Pending |
-| SRCH-04     | —     | Pending |
-| SRCH-05     | —     | Pending |
-| SRCHUI-01   | —     | Pending |
-| SRCHUI-02   | —     | Pending |
-| SRCHUI-03   | —     | Pending |
-| SRCHUI-04   | —     | Pending |
+| Requirement | Phase   | Status  |
+| ----------- | ------- | ------- |
+| QUAL-01     | Phase 1 | Pending |
+| QUAL-02     | Phase 1 | Pending |
+| QUAL-03     | Phase 1 | Pending |
+| QUAL-04     | Phase 1 | Pending |
+| SCORE-01    | Phase 2 | Pending |
+| SCORE-02    | Phase 2 | Pending |
+| SCORE-03    | Phase 2 | Pending |
+| SCORE-04    | Phase 2 | Pending |
+| SCORE-05    | Phase 2 | Pending |
+| SCORE-06    | Phase 2 | Pending |
+| SCOREUI-01  | Phase 2 | Pending |
+| SCOREUI-02  | Phase 2 | Pending |
+| SRCH-01     | Phase 3 | Pending |
+| SRCH-02     | Phase 3 | Pending |
+| SRCH-03     | Phase 3 | Pending |
+| SRCH-04     | Phase 3 | Pending |
+| SRCH-05     | Phase 3 | Pending |
+| SRCHUI-01   | Phase 3 | Pending |
+| SRCHUI-02   | Phase 3 | Pending |
+| SRCHUI-03   | Phase 3 | Pending |
+| SRCHUI-04   | Phase 3 | Pending |
 
 **Coverage:**
 
 - v1 requirements: 21 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 21
+- Mapped to phases: 21/21
+- Unmapped: 0
 
 ---
 
 _Requirements defined: 2026-05-31_
-_Last updated: 2026-05-31 after initial definition_
+_Last updated: 2026-05-31 after roadmap creation_

@@ -133,3 +133,67 @@ These are non-obvious and easy to break.
 - `docs/hermes-ai-strategy.md` — why Hermes is the chosen LLM (uncensored, free tier viable)
 - `docs/superpowers/plans/` — P0/P1 plans (security, tests, LLM scoring, NL search, hosted MVP)
 - `docs/superpowers/HOSTED-MVP-SETUP-CHECKLIST.md` — manual Firebase + Railway setup walkthrough
+
+<!-- GSD:project-start source:PROJECT.md -->
+## Project
+
+**Claude Crawler**
+
+A Node.js/Express service that crawls GitHub, npm, Reddit, Anthropic's org, and Google CSE to build a scored catalog of Claude Code ecosystem tools (agents, skills, MCP servers, CLAUDE.md templates, hooks). Serves a REST API and a vanilla-JS dashboard at `http://localhost:3737` with one-click install to `~/.claude/` behind a content security scan. Targeting a Show HN launch once LLM-powered scoring and natural language search are live.
+
+**Core Value:** The only tool in the Claude ecosystem that can answer "find me something for database migrations" and surface the right result — unified cross-type discovery with download-time security scanning and natural language search.
+
+### Constraints
+
+- **Tech Stack:** CommonJS only — no TypeScript, no bundler, no build step
+- **Single process:** PM2 fork mode with `instances: 1` — cluster mode multiplies external API traffic
+- **Security:** Scanner must run on full file content (no truncation); downloads only from allowlisted hosts (`raw.githubusercontent.com`, `objects.githubusercontent.com`)
+- **LLM cost:** Hermes 3 405B free tier → $0/refresh. Paid tier ~$0.13/refresh at 500 tools. Stay on free tier until validated.
+- **SSRF guard:** `maxRedirects: 0` on axios download calls; `isAllowedDownloadUrl()` must gate all new download paths
+<!-- GSD:project-end -->
+
+<!-- GSD:stack-start source:STACK.md -->
+## Technology Stack
+
+Technology stack not yet documented. Will populate after codebase mapping or first phase.
+<!-- GSD:stack-end -->
+
+<!-- GSD:conventions-start source:CONVENTIONS.md -->
+## Conventions
+
+Conventions not yet established. Will populate as patterns emerge during development.
+<!-- GSD:conventions-end -->
+
+<!-- GSD:architecture-start source:ARCHITECTURE.md -->
+## Architecture
+
+Architecture not yet mapped. Follow existing patterns found in the codebase.
+<!-- GSD:architecture-end -->
+
+<!-- GSD:skills-start source:skills/ -->
+## Project Skills
+
+| Skill | Description | Path |
+|-------|-------------|------|
+| spike-findings-claude-crawler | Implementation blueprint from spike experiments for building a 10x+ corpus of Claude Code tooling. Proven patterns for collection-repo crawling, awesome-list discovery, and file-search. Auto-load during any work on src/crawlers/. | `.claude/skills/spike-findings-claude-crawler/SKILL.md` |
+<!-- GSD:skills-end -->
+
+<!-- GSD:workflow-start source:GSD defaults -->
+## GSD Workflow Enforcement
+
+Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+
+Use these entry points:
+- `/gsd-quick` for small fixes, doc updates, and ad-hoc tasks
+- `/gsd-debug` for investigation and bug fixing
+- `/gsd-execute-phase` for planned phase work
+
+Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+<!-- GSD:workflow-end -->
+
+<!-- GSD:profile-start -->
+## Developer Profile
+
+> Profile not yet configured. Run `/gsd-profile-user` to generate your developer profile.
+> This section is managed by `generate-claude-profile` -- do not edit manually.
+<!-- GSD:profile-end -->
